@@ -1,20 +1,40 @@
 services:
-  filesystem:
-    image: mcp/filesystem:latest
-    container_name: mcp-filesystem
-    volumes:
-      - ${FILESYSTEM_IDEAPROJECTS}:/ideaprojects
-      - ${FILESYSTEM_PRIVATEGIT}:/privategit
-      - ${FILESYSTEM_DOWNLOADS}:/downloads
+  figma-mcp-server:
+    image: figma-mcp-server
+    build: 
+      context: .
+      dockerfile: figma-mcp-server.Dockerfile
+    stdin_open: true
     environment:
-      - FILESYSTEM_IDEAPROJECTS=${FILESYSTEM_IDEAPROJECTS}
-      - FILESYSTEM_PRIVATEGIT=${FILESYSTEM_PRIVATEGIT}
-      - FILESYSTEM_DOWNLOADS=${FILESYSTEM_DOWNLOADS}
-      - FILESYSTEM_PORT=${FILESYSTEM_PORT}
-    ports:
-      - "${FILESYSTEM_PORT}:4000"
+      - FIGMA_API_KEY=your_figma_api_key_here
+    # 假设入口文件是 /app/index.js
+    command: ["node", "index.js", "--stdio"]  # 直接使用文件名（相对于工作目录）
+    # 或指定完整路径（若工作目录非 /app）：
+    # command: ["node", "/app/src/main.js", "--stdio"]
     restart: unless-stopped
-    command: /ideaprojects /privategit /downloads
+    read_only: true
+    user: "node"
+    volumes:
+      - figma-cache:/home/node/.cache
+  
+volumes:
+  figma-cache:
+  # filesystem:
+  #   image: mcp/filesystem:latest
+  #   container_name: mcp-filesystem
+  #   volumes:
+  #     - ${FILESYSTEM_IDEAPROJECTS}:/ideaprojects
+  #     - ${FILESYSTEM_PRIVATEGIT}:/privategit
+  #     - ${FILESYSTEM_DOWNLOADS}:/downloads
+  #   environment:
+  #     - FILESYSTEM_IDEAPROJECTS=${FILESYSTEM_IDEAPROJECTS}
+  #     - FILESYSTEM_PRIVATEGIT=${FILESYSTEM_PRIVATEGIT}
+  #     - FILESYSTEM_DOWNLOADS=${FILESYSTEM_DOWNLOADS}
+  #     - FILESYSTEM_PORT=${FILESYSTEM_PORT}
+  #   ports:
+  #     - "${FILESYSTEM_PORT}:4000"
+  #   restart: unless-stopped
+  #   command: /ideaprojects /privategit /downloads
   # filesystem:
   #   image: claude-mcp-fs
   #   build:
@@ -28,7 +48,7 @@ services:
   #   ports:
   #     - "${FILESYSTEM_PORT}:4000"
   #   restart: unless-stopped
-
+  # Windows\ai\mcp\docker-compose.yml
   # sqlite:
   #   image: claude-mcp-sqlite
   #   build:

@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+      "fetch": {
+          "command": "uvx",
+          "args": [
+              "mcp-server-fetch"
+          ],
+          "fromGalleryId": "modelcontextprotocol.servers_fetch"
+      },
+      "filesystem": {
+          "command": "docker",
+          "args": [
+              "run",
+              "-i",
+              "--rm",
+              "--mount",
+              "type=bind,src=D://IdeaProjects,dst=/ideaprojects",
+              "mcp/filesystem",
+              "/ideaprojects"
+          ]
+      },
+      "sequentialthinking": {
+        "command": "docker",
+        "args": [
+          "run",
+          "--rm",
+          "-i",
+          "mcp/sequentialthinking"
+        ]
+      },
+      "everything-search": {
+        "command": "uvx",
+        "args": [
+          "mcp-server-everything-search"
+        ],
+        "env": {
+          "EVERYTHING_SDK_PATH": "D:\\tools\\Everything-SDK\\dll\\Everything64.dll"
+        }
+      }
+  }
+}
