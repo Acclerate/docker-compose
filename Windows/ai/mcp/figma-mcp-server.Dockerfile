@@ -21,3 +21,20 @@ RUN node -v && npm -v && figma-developer-mcp --version
 CMD ["node"]
 
 # docker build --pull=false -f Windows\ai\mcp\figma-mcp-server.Dockerfile -t figma-mcp-server:latest Windows\ai\mcp
+# trae配置
+# {
+#   "mcpServers": {
+#     "Figma AI Bridge": {
+#       "command": "docker",
+#       "args": [
+#         "run",
+#         "--rm",
+#         "-i",
+#         "-e", "FIGMA_API_KEY=您的API密钥",
+#         "figma-mcp-server",
+#         "figma-developer-mcp",
+#         "--stdio"
+#       ]
+#     }
+#   }
+# }
