@@ -15,8 +15,10 @@
               "--rm",
               "--mount",
               "type=bind,src=D://IdeaProjects,dst=/ideaprojects",
+              "--mount",
+              "type=bind,src=D://privategit,dst=/privategit",
               "mcp/filesystem",
-              "/ideaprojects"
+              "/ideaprojects /privategit"
           ]
       },
       "sequentialthinking": {
