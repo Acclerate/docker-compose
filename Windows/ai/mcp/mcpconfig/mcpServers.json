@@ -5,7 +5,8 @@
       "args": [
         "mcp-server-fetch"
       ],
-      "fromGalleryId": "modelcontextprotocol.servers_fetch"
+      "fromGalleryId": "modelcontextprotocol.servers_fetch",
+      "disabled": false
     },
     "filesystem": {
       "command": "docker",
@@ -17,8 +18,9 @@
         "type=bind,src=D://IdeaProjects,dst=/ideaprojects",
         "--mount",
         "type=bind,src=D://privategit,dst=/privategit",
-        "mcp/filesystem",
-        "/ideaprojects /privategit"
+        "server-filesystem",
+        "/ideaprojects",
+        "/privategit"
       ]
     },
     "sequentialthinking": {
@@ -30,6 +32,18 @@
         "mcp/sequentialthinking"
       ]
     },
+    "context7-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-v",
+        "--rm",
+        "-i",
+        "-p",
+        "4000:4000",
+        "context7-mcp-server"
+      ]
+    },
     "everything-search": {
       "command": "uvx",
       "args": [
@@ -37,7 +51,22 @@
       ],
       "env": {
         "EVERYTHING_SDK_PATH": "D:\\tools\\Everything-SDK\\dll\\Everything64.dll"
-      }
+      },
+      "disabled": false
+    },
+    "Figma AI Bridge": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-e",
+        "FIGMA_API_KEY=your_figma_api_key_here",
+        "figma-mcp-server",
+        "figma-developer-mcp",
+        "--stdio"
+      ],
+      "disabled": true
     },
     "github": {
       "command": "docker",
@@ -48,7 +77,8 @@
         "-e",
         "GITHUB_PERSONAL_ACCESS_TOKEN=your_github_personal_access_token_here",
         "mcp-github-server"
-      ]
+      ],
+      "disabled": false
     }
   }
 }
