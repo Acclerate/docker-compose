@@ -22,8 +22,12 @@ EXPOSE 4001
 # 注意：GITHUB_PERSONAL_ACCESS_TOKEN 需通过环境变量传入
 CMD ["mcp-server-github"]
 
+# 构建镜像命令示例:
+# docker build -t mcp-github-serve
+
+# 运行容器命令示例:
 # docker run -d \
 #   --name mcp-github \
-#   -p 4000:4000 \
+#   -p 4001:4001 \
 #   -e GITHUB_PERSONAL_ACCESS_TOKEN=your_github_personal_access_token_here \
-#   mcp-github-server
+#   mcp-github-serve
