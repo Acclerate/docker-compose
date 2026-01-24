@@ -1,5 +1,5 @@
 # 使用自制jdk
-FROM registry.cn-hangzhou.aliyuncs.com/zhengqing/openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-alpine
 
 # 维护者信息
 MAINTAINER your-name

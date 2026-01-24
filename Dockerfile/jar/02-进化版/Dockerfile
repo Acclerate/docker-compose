@@ -1,6 +1,6 @@
 #FROM openjdk:8-jre-alpine   【 注：jre中并没有携带工具文件，但arthas需要依赖lib包和bin包里面的包和工具，arthas需要jps工具和lib包里的内容 】
 # 使用自制jdk
-FROM registry.cn-hangzhou.aliyuncs.com/zhengqing/openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-alpine
 
 # 维护者信息
 MAINTAINER your-name
