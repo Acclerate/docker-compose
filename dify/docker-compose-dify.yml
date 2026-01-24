@@ -95,8 +95,8 @@ services:
       - dify-db:/var/lib/postgresql/data
     environment:
       - TZ=Asia/Shanghai
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-difyai123456}
-      - POSTGRES_USER=${POSTGRES_USER:-difyai}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dify_password}
+      - POSTGRES_USER=${POSTGRES_USER:-dify}
       - POSTGRES_DB=${POSTGRES_DB:-dify}
       - LANG=C.UTF-8
     restart: unless-stopped
