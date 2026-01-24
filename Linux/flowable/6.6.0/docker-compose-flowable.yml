@@ -12,7 +12,7 @@ networks:
 
 services:
   flowable-ui:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/flowable-ui:6.6.0  # 原镜像`flowable/flowable-ui:6.6.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/flowable-ui:6.6.0  # 原镜像`flowable/flowable-ui:6.6.0`
     container_name: flowable-ui
     restart: unless-stopped
     volumes:
@@ -33,7 +33,7 @@ services:
       - "9004:8080"
 
   mysql:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql:8.0  # 原镜像`mysql:8.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/mysql:8.0  # 原镜像`mysql:8.0`
     container_name: mysql8                                    # 容器名为'mysql8'
     restart: unless-stopped                                               # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:                                                      # 数据卷挂载路径设置,将本机目录映射到容器目录

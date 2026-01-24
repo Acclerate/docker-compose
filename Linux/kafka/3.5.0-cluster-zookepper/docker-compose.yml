@@ -5,7 +5,7 @@ version: "3"
 
 # 定义通用配置
 x-kafka-common: &kafka-common
-  image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka:3.5.0 # 原镜像`bitnami/kafka:3.5.0`
+  image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka:3.5.0 # 原镜像`bitnami/kafka:3.5.0`
   restart: unless-stopped # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
 x-kafka-common-env: &kafka-common-env
   KAFKA_HEAP_OPTS: -Xmx512m -Xms512m # 亲测128m会出现oom
@@ -55,7 +55,7 @@ networks:
 
 services:
   zookeeper:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/zookeeper:latest # 原镜像`bitnami/zookeeper:latest`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/zookeeper:latest # 原镜像`bitnami/zookeeper:latest`
     container_name: zookeeper-server # 容器名为'zookeeper-server'
     restart: unless-stopped # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes: # 数据卷挂载路径设置,将本机目录映射到容器目录
@@ -123,7 +123,7 @@ services:
 
   # kafka-map图形化管理工具 配置参考：https://github.com/dushixiang/kafka-map
   kafka-map:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka-map # 原镜像`dushixiang/kafka-map:latest`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka-map # 原镜像`dushixiang/kafka-map:latest`
     container_name: kafka-map # 容器名为'kafka-map'
     restart: unless-stopped # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:
@@ -146,7 +146,7 @@ services:
 
   # kafka-console-ui图形化管理工具 配置参考：https://github.com/xxd763795151/kafka-console-ui
   kafka-console-ui:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka-console-ui # 原镜像`wdkang/kafka-console-ui`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka-console-ui # 原镜像`wdkang/kafka-console-ui`
     container_name: kafka-console-ui # 容器名
     restart: unless-stopped # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:

@@ -16,5 +16,5 @@ http://127.0.0.1:3000/
 log: mongodb load success...
 ```
 
-访问地址：[`http://ip地址:3000`](http://www.zhengqingya.com:3000)
+访问地址：[`http://ip地址:3000`](http://www.your-name.com:3000)
 默认登录账号密码：`admin@admin.com/ymfe.org`

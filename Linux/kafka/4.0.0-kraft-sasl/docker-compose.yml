@@ -15,7 +15,7 @@ name: kafka
 services:
   kafka:
     container_name: kafka
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka:4.0.0 # 原镜像`bitnami/kafka:4.0.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka:4.0.0 # 原镜像`bitnami/kafka:4.0.0`
     restart: unless-stopped # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:
       - "/etc/localtime:/etc/localtime"
@@ -65,7 +65,7 @@ services:
 
   # kafka-console-ui图形化管理工具 配置参考：https://github.com/xxd763795151/kafka-console-ui
   kafka-console-ui:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka-console-ui # 原镜像`wdkang/kafka-console-ui`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka-console-ui # 原镜像`wdkang/kafka-console-ui`
     container_name: kafka-console-ui # 容器名
     restart: unless-stopped # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:

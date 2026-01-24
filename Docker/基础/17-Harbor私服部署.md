@@ -11,7 +11,7 @@ Harbor是一个用于存储和分发Docker镜像的企业级Registry服务器。
 
 ```shell
 # 进入自己的安装目录
-cd /Users/your-path/IT_zhengqing/soft/soft-dev/Docker
+cd /Users/your-path/IT_your-name/soft/soft-dev/Docker
 
 # 下载： https://github.com/goharbor/harbor/releases/
 wget https://github.com/goharbor/harbor/releases/download/v2.3.2/harbor-offline-installer-v2.3.2.tgz
@@ -83,7 +83,7 @@ database:
   max_open_conns: 900
 
 # The default data volume
-data_volume: /Users/your-path/IT_zhengqing/soft/soft-dev/Docker/harbor/data
+data_volume: /Users/your-path/IT_your-name/soft/soft-dev/Docker/harbor/data
 
 # Harbor Storage settings by default is using /data dir on local filesystem
 # Uncomment storage_service setting If you want to using external storage
@@ -156,7 +156,7 @@ log:
     # are all valid.
     rotate_size: 200M
     # The directory on your host that store log
-    location: /Users/your-path/IT_zhengqing/soft/soft-dev/Docker/harbor/log
+    location: /Users/your-path/IT_your-name/soft/soft-dev/Docker/harbor/log
 
   # Uncomment following lines to enable external syslog endpoint.
   # external_endpoint:
@@ -319,7 +319,7 @@ docker login -u admin -p Harbor12345 harbor.your-path.com:11000
 
 ```shell
 # docker tag SOURCE_IMAGE[:TAG] harbor.your-path.com:11000/test/REPOSITORY[:TAG]
-docker tag registry.cn-hangzhou.aliyuncs.com/zhengqing/portainer:1.24.1 127.0.0.1:11000/test/portainer:1.24.1
+docker tag registry.cn-hangzhou.aliyuncs.com/your-name/portainer:1.24.1 127.0.0.1:11000/test/portainer:1.24.1
 # docker push harbor.your-path.com:11000/test/REPOSITORY[:TAG]
 docker push 127.0.0.1:11000/test/portainer:1.24.1
 ```
@@ -342,7 +342,7 @@ docker pull 127.0.0.1:11000/test/portainer:1.24.1
 安装harbor报错如下：
 
 ```
-prepare base dir is set to /Users/your-path/IT_zhengqing/soft/soft-dev/Docker/harbor
+prepare base dir is set to /Users/your-path/IT_your-name/soft/soft-dev/Docker/harbor
 Error happened in config validation...
 ERROR:root:Error: The protocol is https but attribute ssl_cert is not set
 ```

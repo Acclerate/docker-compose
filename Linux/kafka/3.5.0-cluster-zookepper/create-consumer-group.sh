@@ -5,7 +5,7 @@
 # @params $1 => 消费者组名称
 # @params $2 => 主题名称
 # @example => sh create-consumer-group.sh my-consumer-group simple-local
-# @author zhengqingya
+# @author your-name
 # @date 2025/05/13 00:28
 ####################################
 

@@ -4,7 +4,7 @@
 # @description 一键重命名镜像并推送到指定仓库中
 # @params $? => 代表上一个命令执行后的退出状态: 0->成功,1->失败
 # @example => sh docker-rename-push-images.sh
-# @author zhengqingya
+# @author your-name
 # @date 2022/11/8 10:26
 ####################################
 
@@ -19,9 +19,9 @@ images=(
 )
 
 # 源镜像仓库
-source_image_registry_prefix="registry.cn-hangzhou.aliyuncs.com/zhengqing/"
+source_image_registry_prefix="registry.cn-hangzhou.aliyuncs.com/your-name/"
 # 目标镜像仓库
-target_image_registry_prefix="registry.cn-hangzhou.aliyuncs.com/zhengqing/test-"
+target_image_registry_prefix="registry.cn-hangzhou.aliyuncs.com/your-name/test-"
 
 # 循环
 for image_name in ${images[@]} ; do

@@ -4,5 +4,5 @@
 docker-compose -f docker-compose-grafana.yml -p grafana up -d
 ```
 
-访问地址：[`http://ip地址:3000`](http://www.zhengqingya.com:3000)
+访问地址：[`http://ip地址:3000`](http://www.your-name.com:3000)
 默认登录账号密码：`admin/admin`

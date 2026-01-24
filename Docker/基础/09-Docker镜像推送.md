@@ -24,7 +24,7 @@ docker login -u admin -p Harbor12345 harbor.your-path.com:11000
 
 docker pull nginx
 
-docker tag nginx harbor.your-path.com:11000/zhengqing/nginx:latest
+docker tag nginx harbor.your-path.com:11000/your-name/nginx:latest
 
-docker push harbor.your-path.com:11000/zhengqing/nginx:latest
+docker push harbor.your-path.com:11000/your-name/nginx:latest
 ```

@@ -11,9 +11,9 @@ networks:
 
 services:
   # 应用性能分析 -- 不使用docker的话可下载 https://dlcdn.apache.org/skywalking/9.2.0/apache-skywalking-apm-9.2.0.tar.gz 进行测试
-  # 交互式运行容器测试能够正常启动 docker run --privileged --name oap -i -t  -p 12800:12800 -p 11800:11800 registry.cn-hangzhou.aliyuncs.com/zhengqing/skywalking-oap-server:9.2.0 /bin/bash
+  # 交互式运行容器测试能够正常启动 docker run --privileged --name oap -i -t  -p 12800:12800 -p 11800:11800 registry.cn-hangzhou.aliyuncs.com/your-name/skywalking-oap-server:9.2.0 /bin/bash
   oap:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/skywalking-oap-server:9.2.0 # 原镜像`apache/skywalking-oap-server:9.2.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/skywalking-oap-server:9.2.0 # 原镜像`apache/skywalking-oap-server:9.2.0`
     container_name: oap
     restart: unless-stopped
     privileged: true                    # 获取宿主机root权限
@@ -39,7 +39,7 @@ services:
 
   # 可视化界面
   oap-ui:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/skywalking-ui:9.2.0 # 原镜像`apache/skywalking-ui:9.2.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/skywalking-ui:9.2.0 # 原镜像`apache/skywalking-ui:9.2.0`
     container_name: oap-ui
     restart: unless-stopped
     privileged: true                    # 获取宿主机root权限

@@ -2,7 +2,7 @@
 version: '3'
 services:
   jenkins:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/jenkins:2.346.1                  # 原镜像`jenkins/jenkins:2.346.1`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/jenkins:2.346.1                  # 原镜像`jenkins/jenkins:2.346.1`
     container_name: jenkins                     # 容器名为'jenkins'
     restart: unless-stopped                             # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:

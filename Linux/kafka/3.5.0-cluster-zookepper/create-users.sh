@@ -5,7 +5,7 @@
 # @params $1 => 用户名
 # @params $2 => 密码
 # @example => sh create-users.sh test-user test-password
-# @author zhengqingya
+# @author your-name
 # @date 2025/05/13 00:28
 ####################################
 

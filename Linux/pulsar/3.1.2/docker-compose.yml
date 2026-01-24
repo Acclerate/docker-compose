@@ -12,7 +12,7 @@ networks:
 
 services:
   pulsar:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/pulsar:3.1.2  # 原镜像`apachepulsar/pulsar:3.1.2`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/pulsar:3.1.2  # 原镜像`apachepulsar/pulsar:3.1.2`
     container_name: pulsar
     restart: unless-stopped
 #    volumes:
@@ -35,7 +35,7 @@ services:
         ipv4_address: 172.31.0.11
 
   dashboard:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/pulsar-dashboard # 原镜像`apachepulsar/pulsar-dashboard`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/pulsar-dashboard # 原镜像`apachepulsar/pulsar-dashboard`
     container_name: pulsar-dashboard
     restart: unless-stopped
     depends_on:
@@ -52,7 +52,7 @@ services:
 
   # web可视化管理界面
   pulsar-manager:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/pulsar-manager:v0.2.0 # 原镜像`apachepulsar/pulsar-manager:v0.2.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/pulsar-manager:v0.2.0 # 原镜像`apachepulsar/pulsar-manager:v0.2.0`
     container_name: pulsar-manager
     restart: unless-stopped
     ports:

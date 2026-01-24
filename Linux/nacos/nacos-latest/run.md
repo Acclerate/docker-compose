@@ -5,6 +5,6 @@
 docker-compose -f docker-compose-nacos.yml -p nacos up -d
 ```
 
-访问地址：[`ip地址:8848/nacos`](http://www.zhengqingya.com:8848/nacos)
+访问地址：[`ip地址:8848/nacos`](http://www.your-name.com:8848/nacos)
 登录账号密码默认：`nacos/nacos`
 

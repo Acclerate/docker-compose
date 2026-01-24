@@ -4,14 +4,14 @@
 
 ## 环境准备
 
-Docker安装教程：[https://zhengqing.blog.csdn.net/article/details/103441358](https://zhengqing.blog.csdn.net/article/details/103441358)
+Docker安装教程：[https://your-name.blog.csdn.net/article/details/103441358](https://your-name.blog.csdn.net/article/details/103441358)
 
 > 注：建议使用`Git Bash Here`执行以下命令
 
 ```shell script
 # 创建文件夹
-mkdir -p D:/zhengqingya/soft/soft-dev/Docker
-cd D:/zhengqingya/soft/soft-dev/Docker
+mkdir -p D:/your-name/soft/soft-dev/Docker
+cd D:/your-name/soft/soft-dev/Docker
 
 git clone https://github.com/Acclerate/docker-compose.git
 cd docker-compose/Windows

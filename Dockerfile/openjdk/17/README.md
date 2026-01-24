@@ -4,10 +4,10 @@
 
 ```shell
 # 构建镜像 注：有点慢
-docker build -t registry.cn-hangzhou.aliyuncs.com/zhengqing/openjdk:17 . --no-cache
+docker build -t registry.cn-hangzhou.aliyuncs.com/your-name/openjdk:17 . --no-cache
 # 推送镜像
-docker push registry.cn-hangzhou.aliyuncs.com/zhengqing/openjdk:17
+docker push registry.cn-hangzhou.aliyuncs.com/your-name/openjdk:17
 
 # Dockerfile中引用新镜像
-# FROM registry.cn-hangzhou.aliyuncs.com/zhengqing/openjdk:17
+# FROM registry.cn-hangzhou.aliyuncs.com/your-name/openjdk:17
 ```

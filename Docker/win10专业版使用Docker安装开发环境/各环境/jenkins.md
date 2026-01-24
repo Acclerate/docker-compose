@@ -11,7 +11,7 @@ mkdir E:\your-path\soft\soft-dev\Docker\data\jenkins_home
 docker run -d --name jenkins -p 8080:8080 --restart=always -v /e/your/path/soft-dev/Docker/data/jenkins_home:/home/jenkins_home jenkins/jenkins:lts
 ```
 
-接下来的配置可参考：[https://zhengqing.blog.csdn.net/article/details/95232353](https://zhengqing.blog.csdn.net/article/details/95232353)
+接下来的配置可参考：[https://your-name.blog.csdn.net/article/details/95232353](https://your-name.blog.csdn.net/article/details/95232353)
 
 访问 `Jenkins` [http://127.0.0.1:8081](http://127.0.0.1:8081) ， 
 提示需要到 `/var/jenkins_home/secrets/initialAdminPassword`中获取密码

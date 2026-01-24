@@ -8,7 +8,7 @@ networks:
 
 services:
   nps:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/nps:v0.26.10      # 原镜像`ffdfgdfg/nps:v0.26.10`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/nps:v0.26.10      # 原镜像`ffdfgdfg/nps:v0.26.10`
     container_name: nps                       # 容器名为'nps'
     restart: unless-stopped                   # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:                                  # 数据卷挂载路径设置,将本机目录映射到容器目录

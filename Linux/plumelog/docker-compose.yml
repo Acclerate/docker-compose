@@ -10,7 +10,7 @@ networks:
 
 services:
   plumelog:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/plumelog:3.5.3
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/plumelog:3.5.3
     container_name: plumelog
     restart: unless-stopped
     volumes:
@@ -38,7 +38,7 @@ services:
         ipv4_address: 172.23.0.11
 
   elasticsearch:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/elasticsearch:7.14.1      # 原镜像`elasticsearch:7.14.1`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/elasticsearch:7.14.1      # 原镜像`elasticsearch:7.14.1`
     container_name: plumelog_elasticsearch         # 容器名为'elk_elasticsearch'
     restart: unless-stopped                   # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:                                  # 数据卷挂载路径设置,将本机目录映射到容器目录
@@ -60,7 +60,7 @@ services:
         ipv4_address: 172.23.0.22
 
   redis:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/redis:7.0.5                    # 镜像'redis:7.0.5'
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/redis:7.0.5                    # 镜像'redis:7.0.5'
     container_name: plumelog_redis                                                             # 容器名为'redis'
     restart: unless-stopped                                                                   # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     command: redis-server /etc/redis/redis.conf --requirepass 123456 --appendonly no # 启动redis服务并添加密码为：123456,默认不开启redis-aof方式持久化配置

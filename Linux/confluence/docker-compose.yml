@@ -2,7 +2,7 @@ version: '3'
 
 services:
   confluence:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/atlassian-confluence:7.9.3  # 源镜像`cptactionhank/atlassian-confluence:7.9.3` https://github.com/cptactionhank/docker-atlassian-confluence
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/atlassian-confluence:7.9.3  # 源镜像`cptactionhank/atlassian-confluence:7.9.3` https://github.com/cptactionhank/docker-atlassian-confluence
     container_name: confluence
     restart: always
     volumes:
@@ -19,7 +19,7 @@ services:
       - db
 
   db:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/postgres:14.5                    # 镜像'postgres:14.5'
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/postgres:14.5                    # 镜像'postgres:14.5'
     container_name: confluence-db                                                       # 容器名为'confluence-db'
     restart: always
     # 设置环境变量,相当于docker run命令中的-e

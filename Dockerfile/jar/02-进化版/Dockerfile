@@ -3,7 +3,7 @@
 FROM registry.cn-hangzhou.aliyuncs.com/zhengqing/openjdk:8-jdk-alpine
 
 # 维护者信息
-MAINTAINER zhengqingya
+MAINTAINER your-name
 
 # 构建镜像时传参数据
 ARG APP_NAME

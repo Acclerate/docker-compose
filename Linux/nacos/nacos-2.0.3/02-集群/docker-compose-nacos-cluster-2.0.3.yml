@@ -13,7 +13,7 @@ networks:
 services:
   # nginx
   nacos-nginx:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/nginx:1.21.1      # 镜像`nginx:1.21.1`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/nginx:1.21.1      # 镜像`nginx:1.21.1`
     container_name: nacos-nginx                                          # 容器名为'nacos-nginx'
     restart: unless-stopped                                              # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:                            # 数据卷挂载路径设置,将本机目录映射到容器目录
@@ -33,7 +33,7 @@ services:
       - nacos-server-1
   # nacos节点1
   nacos-server-1:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
     container_name: nacos-server-1                                           # 容器名为'nacos-server-1'
     hostname: nacos-server-1                                                 # 指定容器hostname
     restart: unless-stopped                                              # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
@@ -63,7 +63,7 @@ services:
     mem_limit: 2000m   # 最大使用内存
   # nacos节点2
   nacos-server-2:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
     container_name: nacos-server-2                                           # 容器名为'nacos-server-2'
     hostname: nacos-server-2                                                 # 指定容器hostname
     restart: unless-stopped                                              # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
@@ -92,7 +92,7 @@ services:
     mem_limit: 2000m   # 最大使用内存
   # nacos节点3
   nacos-server-3:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
     container_name: nacos-server-3                                           # 容器名为'nacos-server-3'
     hostname: nacos-server-3                                                 # 指定容器hostname
     restart: unless-stopped                                              # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器

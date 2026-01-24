@@ -27,7 +27,7 @@ services:
 
   # sonarqube
   sonarqube:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/sonarqube:9.2.1-community      # 原镜像`sonarqube:9.2.1-community`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/sonarqube:9.2.1-community      # 原镜像`sonarqube:9.2.1-community`
     container_name: sonarqube
     restart: unless-stopped        # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:

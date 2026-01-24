@@ -9,7 +9,7 @@ version: '3'
 
 services:
   kafka:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka:3.4.1
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka:3.4.1
     container_name: kafka
     environment:
       ALLOW_PLAINTEXT_LISTENER: yes

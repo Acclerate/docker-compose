@@ -2,7 +2,7 @@
 version: "3"
 services:
   xxl-job-admin:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/xxl-job-admin:2.3.0 # 原镜像`xuxueli/xxl-job-admin:2.3.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/xxl-job-admin:2.3.0 # 原镜像`xuxueli/xxl-job-admin:2.3.0`
     container_name: xxl-job-admin
     environment:
       # TODO 根据自己的配置修改，配置项参考源码文件：/xxl-job/xxl-job-admin/src/main/resources/application.properties

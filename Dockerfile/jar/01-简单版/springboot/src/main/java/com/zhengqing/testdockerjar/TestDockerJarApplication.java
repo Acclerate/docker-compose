@@ -1,4 +1,4 @@
-package com.zhengqing.testdockerjar;
+package com.your-name.testdockerjar;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

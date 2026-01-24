@@ -7,7 +7,7 @@ networks:
 services:
   # mongodb
   mongodb:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/mongo:7.0  # 原镜像`mongo:7.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/mongo:7.0  # 原镜像`mongo:7.0`
     restart: unless-stopped
     container_name: mongodb
     environment:
@@ -25,7 +25,7 @@ services:
 
 #  # 可视化图形工具 -- 注：此连接驱动版本低 导致无法正常操作mongo
 #  adminmongo:
-#    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/adminmongo # 原镜像`mrvautin/adminmongo`
+#    image: registry.cn-hangzhou.aliyuncs.com/your-name/adminmongo # 原镜像`mrvautin/adminmongo`
 #    restart: unless-stopped
 #    container_name: adminmongo
 #    environment:

@@ -5,7 +5,7 @@ version: '3'
 
 # 定义通用配置
 x-kafka-common: &kafka-common
-  image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka:3.5.0   # 原镜像`bitnami/kafka:3.5.0`
+  image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka:3.5.0   # 原镜像`bitnami/kafka:3.5.0`
   restart: unless-stopped                                          # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
 x-kafka-common-env: &kafka-common-env
   KAFKA_HEAP_OPTS: -Xmx1g -Xms1g # Apache Kafka 的 Java 堆大小。默认值：-Xmx1024m -Xms1024m。
@@ -103,7 +103,7 @@ services:
 
   # kafka-map图形化管理工具
   kafka-map:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/kafka-map     # 原镜像`dushixiang/kafka-map:latest`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/kafka-map     # 原镜像`dushixiang/kafka-map:latest`
     container_name: kafka-map                                        # 容器名为'kafka-map'
     restart: unless-stopped                                          # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:

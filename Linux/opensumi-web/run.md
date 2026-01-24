@@ -6,4 +6,4 @@
 docker-compose -f docker-compose-opensumi-web.yml -p opensumi-web up -d
 ```
 
-访问地址：[`http://ip地址:20000`](http://www.zhengqingya.com:20000)
+访问地址：[`http://ip地址:20000`](http://www.your-name.com:20000)

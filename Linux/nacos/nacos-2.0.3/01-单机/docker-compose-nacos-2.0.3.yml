@@ -9,7 +9,7 @@ networks:
 
 services:
   nacos:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/nacos-server:2.0.3    # 原镜像`nacos/nacos-server:2.0.3`
     container_name: nacos_server                                 # 容器名为'nacos_server'
     restart: unless-stopped                                              # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
 #    env_file:
@@ -25,7 +25,7 @@ services:
       - MODE=standalone                           # 单机模式启动
       - SPRING_DATASOURCE_PLATFORM=mysql          # 数据源平台 仅支持mysql或不保存empty
       # TODO 修改mysql连接信息
-      - MYSQL_SERVICE_HOST=www.zhengqingya.com    # 注：这里不能为`127.0.0.1`或`localhost`方式！！！
+      - MYSQL_SERVICE_HOST=www.your-name.com    # 注：这里不能为`127.0.0.1`或`localhost`方式！！！
       - MYSQL_SERVICE_DB_NAME=nacos_config        # 所需sql脚本位于 `nacos_xxx/nacos-mysql.sql`
       # mysql5.7 连接参数
 #      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false

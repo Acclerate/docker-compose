@@ -8,7 +8,7 @@ Kafka中将消息存储在可配置数量的分区中，以便实现横向扩展
 docker-compose -f docker-compose-kafka.yml -p kafka up -d
 ```
 
-集群管理地址：[`ip地址:9006`](http://www.zhengqingya.com:9006)
+集群管理地址：[`ip地址:9006`](http://www.your-name.com:9006)
 
 ### kafka-manager 使用
 

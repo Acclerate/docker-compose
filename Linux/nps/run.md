@@ -10,7 +10,7 @@
 docker-compose -f docker-compose-nps.yml -p nps up -d
 ```
 
-访问地址：[`http://ip地址:30080`](http://www.zhengqingya.com:30080)
+访问地址：[`http://ip地址:30080`](http://www.your-name.com:30080)
 默认登录账号密码：`admin/123`
 
 #### 服务端配置

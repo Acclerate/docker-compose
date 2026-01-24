@@ -37,18 +37,18 @@ docker ps -a
 docker diff centos容器ID/容器名
 
 # 提交镜像
-docker commit -m "测试提交" -a "your-path" centos容器ID/容器名 registry.cn-hangzhou.aliyuncs.com/zhengqing/centos:latest
+docker commit -m "测试提交" -a "your-path" centos容器ID/容器名 registry.cn-hangzhou.aliyuncs.com/your-name/centos:latest
 # 查看新创建的镜像
 docker images 新的镜像名
 
 # 推送到远程仓库
-docker push registry.cn-hangzhou.aliyuncs.com/zhengqing/centos:latest
+docker push registry.cn-hangzhou.aliyuncs.com/your-name/centos:latest
 
 # pull自己制作的镜像
-docker pull registry.cn-hangzhou.aliyuncs.com/zhengqing/centos:latest
+docker pull registry.cn-hangzhou.aliyuncs.com/your-name/centos:latest
 
 # 运行
-docker run -i -t --name=mycentos registry.cn-hangzhou.aliyuncs.com/zhengqing/centos:latest bash
+docker run -i -t --name=mycentos registry.cn-hangzhou.aliyuncs.com/your-name/centos:latest bash
 ```
 
 ### ex: 提交redis
@@ -67,11 +67,11 @@ docker ps -a
 docker diff centos镜像id
 
 # 提交镜像
-docker commit -m "测试提交" -a "your-path" centos镜像id registry.cn-hangzhou.aliyuncs.com/zhengqing/redis_test:latest
-docker push registry.cn-hangzhou.aliyuncs.com/zhengqing/redis_test:latest
+docker commit -m "测试提交" -a "your-path" centos镜像id registry.cn-hangzhou.aliyuncs.com/your-name/redis_test:latest
+docker push registry.cn-hangzhou.aliyuncs.com/your-name/redis_test:latest
 
 # pull自己制作的镜像并运行
-docker run --name redis_test_server -p 6000:6379 -d registry.cn-hangzhou.aliyuncs.com/zhengqing/redis_test:latest redis-server
+docker run --name redis_test_server -p 6000:6379 -d registry.cn-hangzhou.aliyuncs.com/your-name/redis_test:latest redis-server
 ```
 
 ### ex: 提交jenkins
@@ -81,9 +81,9 @@ docker run --name redis_test_server -p 6000:6379 -d registry.cn-hangzhou.aliyunc
 docker diff jenkins
 
 # 提交镜像
-docker commit -m "测试提交jenkins" -a "your-path" jenkins registry.cn-hangzhou.aliyuncs.com/zhengqing/jenkins:v1
-docker push registry.cn-hangzhou.aliyuncs.com/zhengqing/jenkins:v1
+docker commit -m "测试提交jenkins" -a "your-path" jenkins registry.cn-hangzhou.aliyuncs.com/your-name/jenkins:v1
+docker push registry.cn-hangzhou.aliyuncs.com/your-name/jenkins:v1
 
 # 运行测试
-docker run -d --name jenkins_test -p 10000:8080 -u root registry.cn-hangzhou.aliyuncs.com/zhengqing/jenkins:v1
+docker run -d --name jenkins_test -p 10000:8080 -u root registry.cn-hangzhou.aliyuncs.com/your-name/jenkins:v1
 ```

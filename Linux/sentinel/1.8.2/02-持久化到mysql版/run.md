@@ -7,5 +7,5 @@
 docker-compose -f docker-compose-sentinel-mysql.yml -p sentinel up -d
 ```
 
-访问地址：[`ip地址:8858`](http://www.zhengqingya.com:8858)
+访问地址：[`ip地址:8858`](http://www.your-name.com:8858)
 登录账号密码：`sentinel/sentinel`

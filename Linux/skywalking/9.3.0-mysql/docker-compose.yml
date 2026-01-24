@@ -12,7 +12,7 @@ networks:
 services:
   # 应用性能分析 -- 不使用docker的话可下载 https://dlcdn.apache.org/skywalking/9.3.0/apache-skywalking-apm-9.3.0.tar.gz 进行测试
   oap:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/skywalking-oap-server:9.3.0 # 原镜像`apache/skywalking-oap-server:9.3.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/skywalking-oap-server:9.3.0 # 原镜像`apache/skywalking-oap-server:9.3.0`
     container_name: oap
     restart: unless-stopped
     environment:
@@ -38,7 +38,7 @@ services:
 
   # 可视化界面
   oap-ui:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/skywalking-ui:9.3.0 # 原镜像`apache/skywalking-ui:9.3.0`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/skywalking-ui:9.3.0 # 原镜像`apache/skywalking-ui:9.3.0`
     container_name: oap-ui
     restart: unless-stopped
     depends_on:
@@ -56,7 +56,7 @@ services:
 
   # mysql存储
   mysql:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql:5.7  # 原镜像`mysql:5.7`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/mysql:5.7  # 原镜像`mysql:5.7`
     container_name: oap-mysql                                    # 容器名为'oap-mysql'
     restart: unless-stopped
     volumes:                                                      # 数据卷挂载路径设置,将本机目录映射到容器目录

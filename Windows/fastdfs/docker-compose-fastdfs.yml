@@ -2,7 +2,7 @@ version: '3'
 services:
   # tracker容器: 跟踪服务器，起到调度的作用
   fastdfs-tracker:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/fastdfs:latest        # 原镜像`delron/fastdfs`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/fastdfs:latest        # 原镜像`delron/fastdfs`
     container_name: fastdfs_tracker
     hostname: fastdfs-tracker
     command: tracker
@@ -13,7 +13,7 @@ services:
 
   # storage容器：存储服务器，提供容量和备份服务
   fastdfs-storage:
-    image: registry.cn-hangzhou.aliyuncs.com/zhengqing/fastdfs:latest       # 原镜像`delron/fastdfs`
+    image: registry.cn-hangzhou.aliyuncs.com/your-name/fastdfs:latest       # 原镜像`delron/fastdfs`
     container_name: fastdfs_storage
     volumes:
       #      - ./fastdfs/nginx.conf:/usr/local/nginx/conf/nginx.conf # Nginx配置文件
