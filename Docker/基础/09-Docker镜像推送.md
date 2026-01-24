@@ -20,11 +20,11 @@ docker push 新镜像仓库地址
 
 ```shell
 # 认证harbor私服
-docker login -u admin -p Harbor12345 harbor.zhengqingya.com:11000
+docker login -u admin -p Harbor12345 harbor.your-path.com:11000
 
 docker pull nginx
 
-docker tag nginx harbor.zhengqingya.com:11000/zhengqing/nginx:latest
+docker tag nginx harbor.your-path.com:11000/zhengqing/nginx:latest
 
-docker push harbor.zhengqingya.com:11000/zhengqing/nginx:latest
+docker push harbor.your-path.com:11000/zhengqing/nginx:latest
 ```

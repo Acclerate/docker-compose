@@ -9,11 +9,11 @@ docker search mysql
 docker pull registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql5.7
 
 
-mkdir -p /zhengqingya/soft/mysql/mysql
-mkdir -p /zhengqingya/soft/mysql/mysql/conf.d
-mkdir -p /zhengqingya/soft/mysql/mysql/data
+mkdir -p /your/path/mysql/mysql
+mkdir -p /your/path/mysql/mysql/conf.d
+mkdir -p /your/path/mysql/mysql/data
 
-cd /zhengqingya/soft/mysql/mysql
+cd /your/path/mysql/mysql
 
 
 # echo:如果没有这个文件则创建。如果有这个文件，那么新内容将会代替原来的内容
@@ -45,7 +45,7 @@ default-character-set=utf8  # 设置mysql客户端默认字符集
 ' > my.cnf
 
 # 运行镜像
-docker run --name mysql_server -d -p 3307:3306 --restart=always -v /zhengqingya/soft/mysql/mysql/data/:/var/lib/mysql -v /zhengqingya/soft/mysql/mysql/conf.d:/etc/mysql/conf.d -v /zhengqingya/soft/mysql/mysql/my.cnf:/etc/mysql/my.cnf -e MYSQL_ROOT_PASSWORD=zhengqing registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql5.7
+docker run --name mysql_server -d -p 3307:3306 --restart=always -v /your/path/mysql/mysql/data/:/var/lib/mysql -v /your/path/mysql/mysql/conf.d:/etc/mysql/conf.d -v /your/path/mysql/mysql/my.cnf:/etc/mysql/my.cnf -e MYSQL_ROOT_PASSWORD=zhengqing registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql5.7
 
 # -d 标识是让 docker 容器在后台运行。
 # -p 标识通知 Docker 将容器内部使用的网络端口映射到我们使用的主机上。

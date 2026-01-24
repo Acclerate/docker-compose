@@ -1,4 +1,4 @@
-> https://gitee.com/zhengqingya/docker-compose
+> https://github.com/Acclerate/docker-compose
 
 # docker-compose-linux
 
@@ -8,7 +8,7 @@
 
 ```shell
 # 安装git命令： yum install -y git
-git clone https://gitee.com/zhengqingya/docker-compose.git
+git clone https://github.com/Acclerate/docker-compose.git
 cd docker-compose/Linux
 ```
 

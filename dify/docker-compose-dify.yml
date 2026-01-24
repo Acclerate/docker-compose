@@ -1,0 +1,160 @@
+version: '3.8'
+
+services:
+  # Web 前端（Next.js）
+  web:
+    image: langgenius/dify-web:latest
+    container_name: dify-web
+    ports:
+      - "8650:3000"
+    depends_on:
+      - api
+    environment:
+      - NEXT_PUBLIC_API_PREFIX=http://127.0.0.1:5001
+      - NEXT_PUBLIC_PUBLIC_API_PREFIX=http://127.0.0.1:5001
+      - NEXT_PUBLIC_APP_ENV=production
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    networks:
+      - dify-network
+
+  # API 服务（核心后端）
+  api:
+    image: langgenius/dify-api:latest
+    container_name: dify-api
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+      - redis
+      - weaviate
+    volumes:
+      - dify-storage:/app/storage
+    env_file:
+      - .env
+    user: "0:0"
+    environment:
+      - TZ=Asia/Shanghai
+      - MIGRATION_ENABLED=true
+    restart: unless-stopped
+    networks:
+      - dify-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Celery Worker（异步任务）
+  worker:
+    image: langgenius/dify-api:latest
+    container_name: dify-worker
+    command: celery -A app.celery worker -l info -P gevent -c 10
+    depends_on:
+      - api
+      - db
+      - redis
+    volumes:
+      - dify-storage:/app/storage
+    env_file:
+      - .env
+    user: "0:0"
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    networks:
+      - dify-network
+
+  # Celery Beat（定时任务）
+  beat:
+    image: langgenius/dify-api:latest
+    container_name: dify-beat
+    command: celery -A app.celery beat -l info
+    depends_on:
+      - api
+      - db
+      - redis
+    volumes:
+      - dify-storage:/app/storage
+    env_file:
+      - .env
+    user: "0:0"
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    networks:
+      - dify-network
+
+  # PostgreSQL 数据库
+  db:
+    image: postgres:15-alpine
+    container_name: dify-db
+    ports:
+      - "5532:5432"
+    volumes:
+      - dify-db:/var/lib/postgresql/data
+    environment:
+      - TZ=Asia/Shanghai
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-difyai123456}
+      - POSTGRES_USER=${POSTGRES_USER:-difyai}
+      - POSTGRES_DB=${POSTGRES_DB:-dify}
+      - LANG=C.UTF-8
+    restart: unless-stopped
+    networks:
+      - dify-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "difyai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Redis 缓存
+  redis:
+    image: redis:6-alpine
+    container_name: dify-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - dify-redis:/data
+    restart: unless-stopped
+    networks:
+      - dify-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Weaviate 向量数据库
+  weaviate:
+    image: cr.weaviate.io/semitechnologies/weaviate:1.25.4
+    container_name: dify-weaviate
+    ports:
+      - "8681:8080"
+    volumes:
+      - dify-weaviate:/var/lib/weaviate
+    environment:
+      - TZ=Asia/Shanghai
+      - QUERY_DEFAULTS_LIMIT=25
+      - AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true
+      - PERSISTENCE_DATA_PATH=/var/lib/weaviate
+      - DEFAULT_VECTORIZER_MODULE=none
+      - ENABLE_MODULES=text2vec-cohere,text2vec-huggingface,text2vec-openai,generative-openai,generative-cohere,ref2vec-centroid,reranker-cohere,qna-openai
+      - CLUSTER_HOSTNAME=node1
+    restart: unless-stopped
+    networks:
+      - dify-network
+
+volumes:
+  dify-db:
+    driver: local
+  dify-redis:
+    driver: local
+  dify-storage:
+    driver: local
+  dify-weaviate:
+    driver: local
+
+networks:
+  dify-network:
+    driver: bridge

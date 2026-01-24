@@ -13,7 +13,7 @@ Docker安装教程：[https://zhengqing.blog.csdn.net/article/details/103441358]
 mkdir -p D:/zhengqingya/soft/soft-dev/Docker
 cd D:/zhengqingya/soft/soft-dev/Docker
 
-git clone https://gitee.com/zhengqingya/docker-compose.git
+git clone https://github.com/Acclerate/docker-compose.git
 cd docker-compose/Windows
 ```
 

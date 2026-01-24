@@ -5,10 +5,10 @@
 docker pull jenkins/jenkins:lts
 
 # 创建一个jenkins目录 【注意是反斜杠哦】
-mkdir E:\zhengqingya\soft\soft-dev\Docker\data\jenkins_home
+mkdir E:\your-path\soft\soft-dev\Docker\data\jenkins_home
 
 # 启动一个jenkins容器      
-docker run -d --name jenkins -p 8080:8080 --restart=always -v /e/zhengqingya/soft/soft-dev/Docker/data/jenkins_home:/home/jenkins_home jenkins/jenkins:lts
+docker run -d --name jenkins -p 8080:8080 --restart=always -v /e/your/path/soft-dev/Docker/data/jenkins_home:/home/jenkins_home jenkins/jenkins:lts
 ```
 
 接下来的配置可参考：[https://zhengqing.blog.csdn.net/article/details/95232353](https://zhengqing.blog.csdn.net/article/details/95232353)
