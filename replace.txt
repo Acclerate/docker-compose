@@ -1,6 +1,0 @@
-https://gitee.com/zhengqingya/docker-compose==>https://github.com/Acclerate/docker-compose
-gitee.com/zhengqingya/docker-compose==>github.com/Acclerate/docker-compose
-zhengqingya==>your-name
-/zhengqingya/soft==>/your/path
-E:\\zhengqingya==>E:\\your-path
-/e/zhengqingya==>e/your-path

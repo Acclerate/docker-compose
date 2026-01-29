@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   # Web 前端（Next.js）
+  # Web 前端（Next.js）
   web:
     image: langgenius/dify-web:latest
     container_name: dify-web
@@ -12,6 +13,10 @@ services:
     environment:
       - NEXT_PUBLIC_API_PREFIX=http://127.0.0.1:5001
       - NEXT_PUBLIC_PUBLIC_API_PREFIX=http://127.0.0.1:5001
+      - CONSOLE_API_URL=http://127.0.0.1:5001
+      - APP_API_URL=http://127.0.0.1:5001
+      
+      # 其他配置
       - NEXT_PUBLIC_APP_ENV=production
       - TZ=Asia/Shanghai
     restart: unless-stopped
@@ -34,6 +39,8 @@ services:
       - .env
     user: "0:0"
     environment:
+      - ENABLE_PLUGIN_DAEMON=false
+      - ENABLE_MARKETPLACE=false
       - TZ=Asia/Shanghai
       - MIGRATION_ENABLED=true
     restart: unless-stopped
@@ -60,6 +67,8 @@ services:
       - .env
     user: "0:0"
     environment:
+      - ENABLE_PLUGIN_DAEMON=false
+      - ENABLE_MARKETPLACE=false
       - TZ=Asia/Shanghai
     restart: unless-stopped
     networks:
@@ -103,7 +112,7 @@ services:
     networks:
       - dify-network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "difyai"]
+      test: ["CMD", "pg_isready", "-U", "dify"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -145,6 +154,21 @@ services:
     networks:
       - dify-network
 
+  sandbox:
+    image: langgenius/dify-sandbox:latest
+    container_name: dify-sandbox
+    environment:
+      - TZ=Asia/Shanghai
+      - GIN_MODE=release
+      - WORKER_TIMEOUT=15
+      - ENABLE_NETWORK=true
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
+      - NO_PROXY=
+    networks:
+      - dify-network
+    restart: unless-stopped    
+
 volumes:
   dify-db:
     driver: local
@@ -154,7 +178,7 @@ volumes:
     driver: local
   dify-weaviate:
     driver: local
-
+    
 networks:
   dify-network:
     driver: bridge
