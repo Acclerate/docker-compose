@@ -3,3 +3,4 @@
 .claude
 tmp*
 dify/.env
+Windows/mysql/*

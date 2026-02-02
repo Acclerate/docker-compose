@@ -1,0 +1,57 @@
+services:
+  ollama:
+    image: ollama/ollama:latest # 建议用 latest，确保功能最新
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - D:/ai_models:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=http://localhost:*,https://localhost:*
+      # 【关键点1】设置为 -1，告诉服务器：只要模型加载了，就永远别释放它
+      - OLLAMA_KEEP_ALIVE=-1
+    restart: unless-stopped
+
+  HY-MT1.5-1.8B-init:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    entrypoint: /bin/sh
+    environment:
+      - OLLAMA_HOST=ollama:11434
+    command: >
+      -c "
+        echo 'Step 1: Waiting for Ollama server...' &&
+        # 使用 ollama list 代替 curl，如果连不上它会报错，循环就会继续
+        # 这比 curl 更可靠，因为 ollama 客户端肯定存在
+        until ollama list > /dev/null 2>&1; do
+          echo '...waiting for connection'
+          sleep 2
+        done &&
+
+        echo 'Step 2: Checking/Downloading model...' &&
+        # 直接 pull 即可。如果已存在，Ollama 会自动校验哈希并瞬间完成，无需 grep 判断
+        ollama pull demonbyron/HY-MT1.5-1.8B:latest &&
+
+        echo 'Step 3: Warming up (Ignition)...' &&
+        # 【关键点2】用 ollama run 发送一个空字符。
+        # 这比 curl 发送 JSON 简单得多，且效果一样，能强制将模型加载进显存。
+        echo ' ' | ollama run demonbyron/HY-MT1.5-1.8B:latest &&
+
+        echo '--- SUCCESS: Model is loaded and permanent! ---'
+      "
+    restart: "no"
+
+# docker exec -it ollama ollama pull demonbyron/HY-MT1.5-1.8B:latest
+# docker exec -it ollama ollama pull qwen3:8b
+# docker exec -it ollama ollama pull qwen3:14b-q8_0
+# docker exec -it ollama ollama pull qwen3:14b-q4_K_M
+# docker exec -it ollama ollama pull qwen3:30b-a3b-q4_K_M
+# docker exec -it ollama ollama pull qwen3:30b-a3b-instruct-2507-q4_K_M
+# docker exec -it ollama ollama pull qwen3:30b-a3b-q4_K_M
+# docker exec -it ollama ollama run qwen3:30b-a3b-thinking-2507-q8_0
+# 追求极限性能：选30b-a3b-q4_K_M，qwen3:30b-a3b-instruct-2507-q4_K_M  MoE架构优势明显  19GB
+# 平衡性能和资源：14b-q8_0 (16GB) 或 14b-fp16 (30GB) 取决于硬件条件
+# 资源受限：14b-q4_K_M (9.3GB) 仍然是最佳选择
+
