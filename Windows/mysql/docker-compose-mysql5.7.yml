@@ -1,18 +1,24 @@
 version: '3'
 services:
-  mysql:
-    image: registry.cn-hangzhou.aliyuncs.com/your-name/mysql:5.7  # 原镜像`mysql:5.7`
-    container_name: mysql_3306                                    # 容器名为'mysql_3306'
-    restart: unless-stopped                                               # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
-    volumes:                                                      # 数据卷挂载路径设置,将本机目录映射到容器目录
-      - "./mysql5.7/my.cnf:/etc/mysql/my.cnf"
-      - "./mysql5.7/data:/var/lib/mysql"
-      #      - "./mysql5.7/conf.d:/etc/mysql/conf.d"
+  mysql57:
+    image: mysql:5.7
+    container_name: mysql57
+    restart: unless-stopped
+    command:
+      - "--server-id=3306"
+      - "--log-bin=/var/lib/mysql/mysql-bin"
+      - "--binlog_format=ROW"
+      - "--binlog_row_image=FULL"
+      - "--expire_logs_days=7"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_general_ci"
+    volumes:
+      - "D:/DockerFiled/MySQL57/data:/var/lib/mysql"
       - "./mysql5.7/log/mysql/error.log:/var/log/mysql/error.log"
-    environment:                        # 设置环境变量,相当于docker run命令中的-e
+      - "./mysql5.7/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
+    environment:
       TZ: Asia/Shanghai
       LANG: en_US.UTF-8
-      MYSQL_ROOT_PASSWORD: root         # 设置root用户密码
-      MYSQL_DATABASE: demo              # 初始化的数据库名称
-    ports:                              # 映射端口
+      MYSQL_ROOT_PASSWORD: root
+    ports:
       - "3306:3306"

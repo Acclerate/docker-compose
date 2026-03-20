@@ -2,7 +2,7 @@
 version: '3'
 services:
   mysql:
-    image: registry.cn-hangzhou.aliyuncs.com/your-name/mysql:8.0  # 原镜像`mysql:8.0`
+    image: mysql:8.0  # 原镜像`mysql:8.0`
     container_name: mysql8                                    # 容器名为'mysql8'
     restart: unless-stopped                                               # 指定容器退出后的重启策略为始终重启，但是不考虑在Docker守护进程启动时就已经停止了的容器
     volumes:                                                      # 数据卷挂载路径设置,将本机目录映射到容器目录
