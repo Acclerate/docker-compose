@@ -1,179 +1,49 @@
 services:
+
+  # ==================== 自建镜像 MCP 服务 ====================
   figma-mcp-server:
     image: figma-mcp-server
-    build: 
+    build:
       context: .
       dockerfile: figma-mcp-server.Dockerfile
     stdin_open: true
     environment:
-      - FIGMA_API_KEY=your_figma_api_key_here
-    # 假设入口文件是 /app/index.js
-    command: ["node", "index.js", "--stdio"]  # 直接使用文件名（相对于工作目录）
-    # 或指定完整路径（若工作目录非 /app）：
-    # command: ["node", "/app/src/main.js", "--stdio"]
+      - FIGMA_API_KEY=${FIGMA_API_KEY}
+    command: [ "node", "index.js", "--stdio" ]
     restart: unless-stopped
     read_only: true
     user: "node"
     volumes:
       - figma-cache:/home/node/.cache
-  
+
+  # ==================== HTTP MCP 服务 (官方镜像，原生 HTTP 支持) ====================
+
+  playwright-mcp:
+    image: mcp/playwright:latest
+    container_name: mcp-playwright
+    restart: unless-stopped
+    ports:
+      - "${PLAYWRIGHT_MCP_PORT}:${PLAYWRIGHT_MCP_PORT}"
+    environment:
+      - PORT=${PLAYWRIGHT_MCP_PORT}
+      - HOST=0.0.0.0
+    # === 新增下面这部分 ===
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "hostmachine:host-gateway"
+    # =====================
+    command: --port ${PLAYWRIGHT_MCP_PORT} --host 0.0.0.0
+  # MySQL MCP - 数据库操作 (192个工具)
+  # 源码: https://github.com/neverinfamous/mysql-mcp
+  # 镜像: https://hub.docker.com/r/writenotenow/mysql-mcp
+  # 注意: 此服务由 Claude Code 直接通过 stdio 调用，不通过 docker-compose 管理
+  # 运行方式: docker run -i --rm -e MYSQL_CONNECTION=mysql://root:root@host.docker.internal:3306 writenotenow/mysql-mcp:latest --mysql mysql://root:root@host.docker.internal:3306 --transport stdio
+
+  # ==================== stdio MCP 服务说明 ====================
+  # 以下 stdio 服务由 Claude Code 直接通过 docker run 管理，不在此文件中配置:
+  # - Memory MCP: mcp/memory:latest
+  # - Sequential-thinking MCP: mcp/sequentialthinking:latest
+
 volumes:
   figma-cache:
-  # filesystem:
-  #   image: mcp/filesystem:latest
-  #   container_name: mcp-filesystem
-  #   volumes:
-  #     - ${FILESYSTEM_IDEAPROJECTS}:/ideaprojects
-  #     - ${FILESYSTEM_PRIVATEGIT}:/privategit
-  #     - ${FILESYSTEM_DOWNLOADS}:/downloads
-  #   environment:
-  #     - FILESYSTEM_IDEAPROJECTS=${FILESYSTEM_IDEAPROJECTS}
-  #     - FILESYSTEM_PRIVATEGIT=${FILESYSTEM_PRIVATEGIT}
-  #     - FILESYSTEM_DOWNLOADS=${FILESYSTEM_DOWNLOADS}
-  #     - FILESYSTEM_PORT=${FILESYSTEM_PORT}
-  #   ports:
-  #     - "${FILESYSTEM_PORT}:4000"
-  #   restart: unless-stopped
-  #   command: /ideaprojects /privategit /downloads
-  # filesystem:
-  #   image: claude-mcp-fs
-  #   build:
-  #     context: .
-  #     dockerfile: filesystem.Dockerfile
-  #   container_name: mcp-filesystem
-  #   volumes:
-  #     - ${FILESYSTEM_PATH}:/sandbox
-  #   environment:
-  #     - FILESYSTEM_PATH=${FILESYSTEM_PATH}
-  #   ports:
-  #     - "${FILESYSTEM_PORT}:4000"
-  #   restart: unless-stopped
-  # Windows\ai\mcp\docker-compose.yml
-  # sqlite:
-  #   image: claude-mcp-sqlite
-  #   build:
-  #     context: .
-  #     dockerfile: sqlite.Dockerfile
-  #   container_name: mcp-sqlite
-  #   volumes:
-  #     - ${SQLITE_PATH}:/app
-  #   environment:
-  #     - SQLITE_PATH=${SQLITE_PATH}
-  #   ports:
-  #     - "${SQLITE_PORT}:4000"
-  #   restart: unless-stopped
-
-  # git:
-  #   image: claude-mcp-git
-  #   build:
-  #     context: .
-  #     dockerfile: git.Dockerfile
-  #   container_name: mcp-git
-  #   volumes:
-  #     - ${GIT_PATH}:/repo
-  #   environment:
-  #     - GIT_PATH=${GIT_PATH}
-  #   ports:
-  #     - "${GIT_PORT}:4000"
-  #   restart: unless-stopped
-
-  # postgres:
-  #   image: claude-mcp-postgres
-  #   build:
-  #     context: .
-  #     dockerfile: postgres.Dockerfile
-  #   container_name: mcp-postgres
-  #   environment:
-  #     - POSTGRES_DB=mydb
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=password
-  #   ports:
-  #     - "${POSTGRES_PORT}:5432"
-  #   restart: unless-stopped
-
-  # memory:
-  #   image: claude-mcp-memory
-  #   build:
-  #     context: .
-  #     dockerfile: memory.Dockerfile
-  #   container_name: mcp-memory
-  #   ports:
-  #     - "${MEMORY_PORT}:4000"
-  #   restart: unless-stopped
-
-  # brave-search:
-  #   image: claude-mcp-brave-search
-  #   build:
-  #     context: .
-  #     dockerfile: brave-search.Dockerfile
-  #   container_name: mcp-brave-search
-  #   environment:
-  #     - BRAVE_API_KEY=${BRAVE_API_KEY}
-  #   ports:
-  #     - "${BRAVE_PORT}:4000"
-  #   restart: unless-stopped
-
-  # everything:
-  #   image: claude-mcp-everything
-  #   build:
-  #     context: .
-  #     dockerfile: everything.Dockerfile
-  #   container_name: mcp-everything
-  #   ports:
-  #     - "${EVERYTHING_PORT}:4000"
-  #   restart: unless-stopped
-
-  # puppeteer:
-  #   image: claude-mcp-puppeteer
-  #   build:
-  #     context: .
-  #     dockerfile: puppeteer.Dockerfile
-  #   container_name: mcp-puppeteer
-  #   ports:
-  #     - "${PUPPETEER_PORT}:4000"
-  #   restart: unless-stopped
-
-  # github:
-  #   image: claude-mcp-github
-  #   build:
-  #     context: .
-  #     dockerfile: github.Dockerfile
-  #   container_name: mcp-github
-  #   environment:
-  #     - GITHUB_API_KEY=${GITHUB_API_KEY}
-  #   ports:
-  #     - "${GITHUB_PORT}:4000"
-  #   restart: unless-stopped
-
-  # sequential-thinking:
-  #   image: claude-mcp-sequential-thinking
-  #   build:
-  #     context: .
-  #     dockerfile: sequential-thinking.Dockerfile
-  #   container_name: mcp-sequential-thinking
-  #   ports:
-  #     - "${SEQUENTIAL_THINKING_PORT}:4000"
-  #   restart: unless-stopped
-
-  # gitlab:
-  #   image: claude-mcp-gitlab
-  #   build:
-  #     context: .
-  #     dockerfile: gitlab.Dockerfile
-  #   container_name: mcp-gitlab
-  #   environment:
-  #     - GITLAB_PERSONAL_ACCESS_TOKEN=${GITLAB_PERSONAL_ACCESS_TOKEN}
-  #     - GITLAB_API_URL=https://gitlab.com/api/v4
-  #   ports:
-  #     - "${GITLAB_PORT}:4000"
-  #   restart: unless-stopped
-
-  # time:
-  #   image: claude-mcp-time
-  #   build:
-  #     context: .
-  #     dockerfile: time.Dockerfile
-  #   container_name: mcp-time
-  #   ports:
-  #     - "${TIME_PORT}:4000"
-  #   restart: unless-stopped
+  memory-data:
