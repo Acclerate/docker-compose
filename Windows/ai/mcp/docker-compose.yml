@@ -1,38 +1,74 @@
 services:
 
   # ==================== 自建镜像 MCP 服务 ====================
-  figma-mcp-server:
-    image: figma-mcp-server
-    build:
-      context: .
-      dockerfile: figma-mcp-server.Dockerfile
-    stdin_open: true
-    environment:
-      - FIGMA_API_KEY=${FIGMA_API_KEY}
-    command: [ "node", "index.js", "--stdio" ]
-    restart: unless-stopped
-    read_only: true
-    user: "node"
-    volumes:
-      - figma-cache:/home/node/.cache
+  # figma-mcp-server:
+  #   image: figma-mcp-server
+  #   build:
+  #     context: .
+  #     dockerfile: figma-mcp-server.Dockerfile
+  #   stdin_open: true
+  #   environment:
+  #     - FIGMA_API_KEY=${FIGMA_API_KEY}
+  #   command: [ "node", "index.js", "--stdio" ]
+  #   restart: unless-stopped
+  #   read_only: true
+  #   user: "node"
+  #   volumes:
+  #     - figma-cache:/home/node/.cache
 
   # ==================== HTTP MCP 服务 (官方镜像，原生 HTTP 支持) ====================
 
+# {
+#   "mcpServers": {
+#     "playwright": {
+#       "type": "http",
+#       "url": "http://localhost:18002/mcp"
+#     }
+#   }
+# }
+
+# docker-compose.yml
   playwright-mcp:
-    image: mcp/playwright:latest
-    container_name: mcp-playwright
-    restart: unless-stopped
+    image: mcr.microsoft.com/playwright/mcp
+    container_name: playwright-mcp
+    restart: always
     ports:
-      - "${PLAYWRIGHT_MCP_PORT}:${PLAYWRIGHT_MCP_PORT}"
+      - "18002:18002"
     environment:
-      - PORT=${PLAYWRIGHT_MCP_PORT}
-      - HOST=0.0.0.0
-    # === 新增下面这部分 ===
+      - PORT=18002
+    entrypoint: ["node", "cli.js"]
+    command: [
+      "--headless",
+      "--browser", "chromium",
+      "--no-sandbox",
+      "--port", "18002",
+      "--host", "0.0.0.0",
+      "--allowed-hosts", "*"
+    ]
     extra_hosts:
       - "host.docker.internal:host-gateway"
       - "hostmachine:host-gateway"
-    # =====================
-    command: --port ${PLAYWRIGHT_MCP_PORT} --host 0.0.0.0
+  # playwright-mcp:
+  #   image: mcr.microsoft.com/playwright:v1.50.0-noble
+  #   container_name: mcp-playwright
+  #   restart: always
+  #   ports:
+  #     - "${PLAYWRIGHT_MCP_PORT:-18002}:${PLAYWRIGHT_MCP_PORT:-18002}"
+  #   environment:
+  #     - PORT=${PLAYWRIGHT_MCP_PORT:-18002}
+  #     - HOST=0.0.0.0
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #     - "hostmachine:host-gateway"
+  #   # 方案1: 使用 npx 启动 Playwright MCP 服务器
+  # # 安装并启动 HTTP 服务器
+  #   command: >
+  #     sh -c "npm install -g @executeautomation/playwright-mcp-server && 
+  #           playwright-mcp-server --port ${PLAYWRIGHT_MCP_PORT:-18002}"
+    
+  # 或者方案2: 如果你需要自定义 entrypoint
+  # entrypoint: ["npx"]
+  # command: ["-y", "@anthropic-ai/playwright-mcp", "--port", "18002", "--host", "0.0.0.0"]
   # MySQL MCP - 数据库操作 (192个工具)
   # 源码: https://github.com/neverinfamous/mysql-mcp
   # 镜像: https://hub.docker.com/r/writenotenow/mysql-mcp
