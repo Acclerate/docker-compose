@@ -81,4 +81,71 @@
       "disabled": false
     }
   }
+
+
+
+  ,
+
+  "context7": {
+      "command": "D:\\tools\\nvm\\v20.9.0\\node.exe",
+      "args": [
+        "C:\\Users\\Administrator\\AppData\\Local\\pnpm\\global\\5\\node_modules\\@upstash\\context7-mcp\\dist\\index.js"
+      ],
+      "disabled": false
+    },
+    "mysql": {
+      "command": "D:\\tools\\nvm\\v20.9.0\\node.exe",
+      "args": [
+        "C:\\Users\\Administrator\\AppData\\Local\\pnpm\\global\\5\\node_modules\\@benborla29\\mcp-server-mysql\\dist\\index.js"
+      ],
+      "env": {
+        "MYSQL_HOST": "127.0.0.1",
+        "MYSQL_PORT": "3306",
+        "MYSQL_USER": "root",
+        "MYSQL_PASS": "root",
+        "MYSQL_DB": "",
+        "ALLOW_INSERT_OPERATION": "true",
+        "ALLOW_UPDATE_OPERATION": "true",
+        "ALLOW_DELETE_OPERATION": "true"
+      },
+      "disabled": false
+    },
+    "playwright": {
+      "type": "http",
+      "url": "http://localhost:18002/mcp"
+    },
+    "web-reader": {
+      "headers": {
+        "Authorization": "Bearer xxxxxxxxxxxxxxxxxxxx.xxxxxxxxxx"
+      },
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp"
+    },
+    "web-search-prime": {
+      "headers": {
+        "Authorization": "Bearer xxxxxxxxxxxxxxxxxxxx.xxxxxxxxxx"
+      },
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp"
+    },
+    "zread": {
+      "headers": {
+        "Authorization": "Bearer xxxxxxxxxxxxxxxxxxxx.xxxxxxxxxx"
+      },
+      "type": "http",
+      "url": "https://open.bigmodel.cn/api/mcp/zread/mcp"
+    },
+    "zai-mcp-server": {
+      "command": "D:\\tools\\nvm\\v20.9.0\\node.exe",
+      "args": [
+        "D:\\tools\\bun_data\\node_modules\\@z_ai\\mcp-server\\build\\index.js"
+      ],
+      "env": {
+        "Z_AI_API_KEY": "xxxxxxxxxxxxxxxxxxxx.xxxxxxxxxx",
+        "Z_AI_MODE": "ZHIPU"
+      },
+      "type": "stdio"
+    }
 }
+
+
