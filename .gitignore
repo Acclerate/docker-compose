@@ -5,3 +5,4 @@ tmp*
 dify/.env
 Windows/mysql/*
 Linux/mysql/mysql5.7/mysql/data/*
+Windows/postgresql/postgresql/*
