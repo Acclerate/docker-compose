@@ -12,6 +12,13 @@ services:
       # 【关键点1】设置为 -1，告诉服务器：只要模型加载了，就永远别释放它
       - OLLAMA_KEEP_ALIVE=-1
     restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+              count: all
 
   HY-MT1.5-1.8B-init:
     image: ollama/ollama:latest
@@ -47,6 +54,7 @@ services:
 # docker exec -it ollama ollama pull qwen3:8b
 # docker exec -it ollama ollama pull qwen3:14b-q8_0
 # docker exec -it ollama ollama pull qwen3:14b-q4_K_M
+# docker exec -it ollama ollama run gemma4:26b
 # docker exec -it ollama ollama pull qwen3:30b-a3b-q4_K_M
 # docker exec -it ollama ollama pull qwen3:30b-a3b-instruct-2507-q4_K_M
 # docker exec -it ollama ollama pull qwen3:30b-a3b-q4_K_M
