@@ -26,8 +26,4 @@ CMD ["mcp-server-github"]
 # docker build -t mcp-github-serve
 
 # 运行容器命令示例:
-# docker run -d \
-#   --name mcp-github \
-#   -p 4001:4001 \
-#   -e GITHUB_PERSONAL_ACCESS_TOKEN=your_github_personal_access_token_here \
-#   mcp-github-serve
+# docker run -d --name mcp-github -p 4001:4001 -e GITHUB_PERSONAL_ACCESS_TOKEN=github_pat_xxxxxxxxxxxxxxxx mcp-github-serve
