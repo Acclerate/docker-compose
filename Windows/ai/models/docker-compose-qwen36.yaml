@@ -1,0 +1,84 @@
+# Qwen3.6-35B-A3B - Docker Compose (RTX 4060 8GB VRAM + 32GB RAM)
+# MoE 架构：35B 总参数，每次推理仅 ~3B 激活，非常适合 CPU/GPU 混合推理
+#
+# 使用方法：
+#   1. 下载模型到 D:/ai_models/llama-gguf/ 目录：
+#      推荐量化：IQ4_XS (18.81GB) - 质量与体积最佳平衡
+#      下载地址：https://huggingface.co/bartowski/Qwen_Qwen3.6-35B-A3B-GGUF
+#   2. 启动: docker compose -f docker-compose-qwen36.yaml up -d
+#   3. 查看日志: docker logs -f qwen36-llamacpp
+#
+# 核心优化：
+#   --cpu-moe    : MoE 专家层卸载到 CPU（关键！大幅降低显存占用）
+#   --fit        : 自动检测显存，智能分配 GPU/CPU 层
+#   --cache-type : KV 缓存量化为 q8_0，节省内存
+#   --flash-attn : Flash Attention 加速
+#
+# 性能参考（8GB VRAM + 32GB RAM，类似配置）：
+#   生成速度约 15-20 t/s，上下文 16K
+
+services:
+  qwen36-llamacpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda13
+    container_name: qwen36-llamacpp
+    ports:
+      - "8362:8362"
+    volumes:
+      - D:/ai_models/llama-gguf:/models/gguf:ro
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "exec ./llama-server \
+          -m /models/gguf/Qwen_Qwen3.6-35B-A3B-IQ4_XS.gguf \
+          --host 0.0.0.0 \
+          --port 8362 \
+          --alias qwen3.6-35b-a3b \
+          --ctx-size 16384 \
+          --n-gpu-layers 99 \
+          --cpu-moe \
+          --fit \
+          --parallel 1 \
+          --threads 8 \
+          --flash-attn \
+          --batch-size 256 \
+          --ubatch-size 256 \
+          --cache-type-k q8_0 \
+          --cache-type-v q8_0 \
+          --temp 0.6 \
+          --top-p 0.95 \
+          --top-k 20 \
+          --min-p 0.0 \
+          --repeat-penalty 1.0 \
+          --jinja",
+      ]
+    ipc: host
+    # ⚠️ 先设为 "no"，测试稳定后再改回 unless-stopped
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+              count: all
+
+# 测试接口：
+#   curl http://localhost:8362/v1/models
+#
+# OpenAI 兼容 API 示例：
+#   curl http://localhost:8362/v1/chat/completions \
+#     -H "Content-Type: application/json" \
+#     -d '{"model":"qwen3.6-35b-a3b","messages":[{"role":"user","content":"Hello"}]}'
+#
+# Cherry Studio / 其他客户端接入：
+#   API Base URL: http://localhost:8362/v1
+#   无需 API Key
+#
+# 可选调优：
+#   更长上下文：增大 --ctx-size（需更多 RAM，32K 约需额外 4GB）
+#   关闭思考模式：添加 --chat-template-kwargs '{"enable_thinking":false}'
+#   更多 MoE 卸载到 GPU：去掉 --cpu-moe，改用 -ot ".ffn_(up|down)_exps.=CPU"

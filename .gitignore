@@ -7,3 +7,4 @@ Windows/mysql/*
 Linux/mysql/mysql5.7/mysql/data/*
 Windows/postgresql/postgresql/*
 Windows/postgresql/postgres-data/*
+Windows/aria2/config/*

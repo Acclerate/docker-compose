@@ -1,0 +1,18 @@
+services:
+  aria2:
+    container_name: aria2
+    image: hurlenko/aria2-ariang:latest
+    restart: unless-stopped
+    ports:
+      - 51973:8080   # AriaNg Web UI
+      - 52871:6800   # Aria2 RPC 端口
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - ARIA2RPCPORT=6800
+      - RPC_SECRET=your_token_here
+    volumes:
+      # 下载目录，映射到宿主机 D:\下载
+      - D:\Downloads:/aria2/data
+      # 配置文件持久化
+      - ./config:/aria2/conf

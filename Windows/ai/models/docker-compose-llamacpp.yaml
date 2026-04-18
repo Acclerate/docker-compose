@@ -1,0 +1,68 @@
+# llama.cpp Server - Docker Compose
+# 与 Ollama 共享模型文件，直接读取 D:/ai_models/models/blobs 中的 GGUF
+#
+# 使用方法：
+#   1. 确认 Ollama 已下载模型（模型以 sha256-xxx 形式存在 blobs/ 目录）
+#   2. 通过 manifest 文件找到对应模型的 blob digest：
+#      type D:\ai_models\models\manifests\registry.ollama.ai\library\<模型名>\<tag>
+#      找到 "mediaType": "application/vnd.ollama.image.model" 对应的 digest
+#   3. 修改下方 LLAMA_MODEL 环境变量为对应的 blob 文件名
+#   4. 启动: docker compose -f docker-compose-llamacpp.yaml up -d
+#
+# 已知模型映射（基于当前 D:/ai_models/models/blobs/）：
+#   gemma4:26b                          ─┐
+#   qwen3:30b-a3b-instruct-2507-q4_K_M  ─┘ 共用 -> sha256-7121486771cbfe218851513210c40b35dbdee93ab1ef43fe36283c883980f0df  (17GB, 需要 20GB+ 显存)
+#   demonbyron/HY-MT1.5-1.8B            -> sha256-9241336acfa2b1df3511ccbf3f4a9791454b77c40139af11f3a73bc8fc888813  (1.1GB)
+#
+# RTX 4060 Laptop (8GB VRAM) 推荐模型：
+#   先通过 Ollama 下载合适模型: docker exec -it ollama ollama pull qwen3:8b
+#   下载后重新查看 manifest 找到新的 blob digest 填入 LLAMA_MODEL
+
+services:
+  llama-cpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda13
+    container_name: llama-cpp
+    ports:
+      - "8361:8361"
+    volumes:
+      # 挂载 Ollama blobs 目录，直接复用 GGUF 模型文件
+      - D:/ai_models/models/blobs:/models/ollama-blobs:ro
+      # 额外挂载独立 GGUF 目录，用于手动放入的模型文件（非 Ollama 管理）
+      - D:/ai_models/llama-gguf:/models/gguf
+    environment:
+      # ---- 修改此处为你的模型文件路径 ----
+      # 使用 Ollama blob:
+      #   -m /models/ollama-blobs/sha256-<你的blob文件名>
+      # 使用独立 GGUF:
+      #   -m /models/gguf/<文件名>.gguf
+      - LLAMA_MODEL=/models/ollama-blobs/sha256-9241336acfa2b1df3511ccbf3f4a9791454b77c40139af11f3a73bc8fc888813
+      - LLAMA_CTX_SIZE=2048
+      - LLAMA_NGL=40
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "exec ./llama-server -m $${LLAMA_MODEL} -c $${LLAMA_CTX_SIZE} -ngl $${LLAMA_NGL} --host 0.0.0.0 --port 8361",
+      ]
+    # ⚠️ 先设为 "no"，测试成功后再改回 unless-stopped，避免 GPU 崩溃时无限重启拖死 Docker
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+              count: all
+
+# 测试接口：
+#   curl http://localhost:8361/v1/models
+#   curl http://localhost:8361/health
+#
+# OpenAI 兼容 API 示例：
+#   curl http://localhost:8361/v1/chat/completions \
+#     -H "Content-Type: application/json" \
+#     -d '{"model":"default","messages":[{"role":"user","content":"Hello"}]}'
+#
+# Cherry Studio / 其他客户端接入：
+#   API Base URL: http://localhost:8361/v1
+#   无需 API Key
