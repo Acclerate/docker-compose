@@ -12,7 +12,7 @@ services:
       - ARIA2RPCPORT=6800
       - RPC_SECRET=your_token_here
     volumes:
-      # 下载目录，映射到宿主机 D:\下载
-      - D:\Downloads:/aria2/data
+      # 下载目录建议使用独立子目录，避免启动时递归 chown 扫描整个 Downloads
+      - D:\Downloads\aria2-data:/aria2/data
       # 配置文件持久化
       - ./config:/aria2/conf
