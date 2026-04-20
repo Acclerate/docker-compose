@@ -8,3 +8,10 @@ Linux/mysql/mysql5.7/mysql/data/*
 Windows/postgresql/postgresql/*
 Windows/postgresql/postgres-data/*
 Windows/aria2/config/*
+Windows/doris/4.0.5/be/storage/*
+Windows/doris/4.0.5/fe/doris-meta/*
+Windows/doris/4.0.5/fe/log/*
+Windows/doris/4.0.5/be/log/*
+Windows/doris/4.0.5/doris-be-4.0.5.tar
+Windows/doris/4.0.5/doris-fe-4.0.5.tar
+DockerPull.exe

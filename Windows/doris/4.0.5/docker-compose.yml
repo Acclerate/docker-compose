@@ -1,0 +1,121 @@
+# 参考文档：
+#   https://doris.apache.org/zh-CN/docs/install/cluster-deployment/run-docker-cluster
+#   https://hub.docker.com/r/apache/doris
+
+# 环境：Windows 11 Pro (Docker Desktop + WSL2) 8核(分配) 23.5GB(分配) / 宿主机 32GB
+#        Docker Desktop 通过 WSL2 后端运行 Linux 容器
+#   >docker exec doris-fe mysql -uroot -h127.0.0.1 -P9030 -e "ALTER USER 'root' IDENTIFIED BY '123456';"
+
+services:
+
+  # ============================================================
+  # Apache Doris FE（Frontend）
+  #   职责：元数据管理、SQL 解析与查询规划、调度
+  #   WebUI : http://localhost:8030  默认账号 root / 空密码
+  #   MySQL : localhost:9030
+  # ============================================================
+  doris-fe:
+    image: apache/doris:fe-4.0.5
+    container_name: doris-fe
+    hostname: doris-fe
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      FE_SERVERS: "fe1:172.28.81.2:9010"
+      FE_ID: 1
+      # 清除 Docker Desktop 注入的代理变量，防止 FE Java 进程启动失败
+      http_proxy: ""
+      https_proxy: ""
+      HTTP_PROXY: ""
+      HTTPS_PROXY: ""
+      no_proxy: ""
+      NO_PROXY: ""
+    ports:
+      - "8030:8030"   # FE HTTP WebUI
+      - "9030:9030"   # FE MySQL 协议（BI 工具 / mysql 客户端连接）
+      - "9010:9010"   # FE Edit Log（集群内部）
+      - "9020:9020"   # FE RPC（集群内部）
+      - "9090:9090"   # Arrow Flight SQL（可选）
+    volumes:
+      - ./fe/conf/fe.conf:/opt/apache-doris/fe/conf/fe.conf
+      - ./fe/doris-meta:/opt/apache-doris/fe/doris-meta
+      - ./fe/log:/opt/apache-doris/fe/log
+    networks:
+      doris-net:
+        ipv4_address: 172.28.81.2
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    # 资源限制：Docker Desktop 分配 8核23.5G，FE 分配 2核6GB
+    # JVM 堆 4GB（fe.conf 中 -Xmx4096m），留余量给堆外内存
+    mem_limit: 6g
+    cpus: 2
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8030/api/bootstrap | grep -q '\"code\":0'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ============================================================
+  # Apache Doris BE（Backend）
+  #   职责：数据存储 + 计算执行
+  #   WebUI : http://localhost:8040
+  # ============================================================
+  doris-be:
+    image: apache/doris:be-4.0.5
+    container_name: doris-be
+    hostname: doris-be
+    restart: unless-stopped
+    depends_on:
+      doris-fe:
+        condition: service_healthy
+    environment:
+      TZ: Asia/Shanghai
+      FE_SERVERS: "fe1:172.28.81.2:9010"
+      BE_ADDR: "172.28.81.3:9050"
+      # 清除 Docker Desktop 注入的代理变量
+      http_proxy: ""
+      https_proxy: ""
+      HTTP_PROXY: ""
+      HTTPS_PROXY: ""
+      no_proxy: ""
+      NO_PROXY: ""
+    ports:
+      - "8040:8040"   # BE HTTP WebUI / Profile
+      - "9050:9050"   # BE 心跳端口
+      - "9060:9060"   # BE Thrift（FE <-> BE 通信）
+      - "8060:8060"   # BE brpc（BE <-> BE 数据交换）
+    volumes:
+      - ./be/conf/be.conf:/opt/apache-doris/be/conf/be.conf
+      - ./be/storage:/opt/apache-doris/be/storage
+      - ./be/log:/opt/apache-doris/be/log
+    networks:
+      doris-net:
+        ipv4_address: 172.28.81.3
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      memlock:
+        soft: -1
+        hard: -1
+    # 资源限制：Docker Desktop 分配 8核23.5G，BE 分配 6核12GB
+    # be.conf 中 mem_limit=8GB，留余量给堆外 + pagecache
+    mem_limit: 12g
+    cpus: 6
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8040/api/health | grep -qi 'ok'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+networks:
+  doris-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.81.0/24

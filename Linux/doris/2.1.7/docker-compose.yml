@@ -1,0 +1,114 @@
+# 参考文档：
+#   https://doris.apache.org/zh-CN/docs/install/cluster-deployment/run-docker-cluster
+#   https://hub.docker.com/r/apache/doris
+
+# 环境：Kylin Linux Advanced Server release V10 (Halberd)  x86_64  8核32G
+#        国产麒麟操作系统，兼容 CentOS/RHEL 生态
+
+version: '3'
+
+networks:
+  doris-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.80.0/24   # 需与 fe.conf / be.conf 中 priority_networks 保持一致
+
+services:
+
+  # ============================================================
+  # Apache Doris FE（Frontend）
+  #   职责：元数据管理、SQL 解析与查询规划、调度
+  #   WebUI : http://宿主机IP:8030  默认账号 root / 空密码
+  #   MySQL : 宿主机IP:9030
+  # ============================================================
+  doris-fe:
+    image: apache/doris:2.1.7-fe-x86_64   # 可改为 latest 或指定其他版本
+    container_name: doris-fe
+    hostname: doris-fe
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      # FE_SERVERS 格式：<fe名称>:<FE容器IP>:<edit_log_port>
+      # 多 FE 时以逗号分隔，此处单节点部署
+      FE_SERVERS: "fe1:172.20.80.2:9010"
+      # 当前 FE 节点 ID，从 1 开始
+      FE_ID: 1
+    ports:
+      - "8030:8030"   # FE HTTP WebUI
+      - "9030:9030"   # FE MySQL 协议（BI 工具 / mysql 客户端连接）
+      - "9010:9010"   # FE Edit Log（集群内部，通常无需对外暴露）
+      - "9020:9020"   # FE RPC（集群内部）
+      - "9090:9090"   # Arrow Flight SQL（可选）
+    volumes:
+      - ./fe/conf/fe.conf:/opt/apache-doris/fe/conf/fe.conf:z   # FE 自定义配置
+      - ./fe/doris-meta:/opt/apache-doris/fe/doris-meta:Z       # FE 元数据（重要，必须持久化，容器私有）
+      - ./fe/log:/opt/apache-doris/fe/log:z                     # FE 日志
+    networks:
+      doris-net:
+        ipv4_address: 172.20.80.2
+    # 文件句柄限制
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    # 资源限制：FE 建议 4 核、8GB（JVM 已在 fe.conf 中配置 -Xmx6144m，留余量给堆外）
+    mem_limit: 8g
+    cpus: 4
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8030/api/bootstrap | grep -q '\"code\":0'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ============================================================
+  # Apache Doris BE（Backend）
+  #   职责：数据存储 + 计算执行
+  #   WebUI : http://宿主机IP:8040
+  # ============================================================
+  doris-be:
+    image: apache/doris:2.1.7-be-x86_64   # 可改为 latest 或指定其他版本
+    container_name: doris-be
+    hostname: doris-be
+    restart: unless-stopped
+    depends_on:
+      doris-fe:
+        condition: service_healthy
+    environment:
+      TZ: Asia/Shanghai
+      # BE 自动向 FE 注册，与 FE_SERVERS 保持一致
+      FE_SERVERS: "fe1:172.20.80.2:9010"
+      # BE 对外暴露的 IP:heartbeat_port，FE 通过此地址探测 BE
+      BE_ADDR: "172.20.80.3:9050"
+    ports:
+      - "8040:8040"   # BE HTTP WebUI / Profile
+      - "9050:9050"   # BE 心跳端口
+      - "9060:9060"   # BE Thrift（FE ↔ BE 通信，集群内部）
+      - "8060:8060"   # BE brpc（BE ↔ BE 数据交换，集群内部）
+    volumes:
+      - ./be/conf/be.conf:/opt/apache-doris/be/conf/be.conf:z   # BE 自定义配置
+      - ./be/storage:/opt/apache-doris/be/storage:Z             # 数据存储（重要，必须持久化，容器私有）
+      - ./be/log:/opt/apache-doris/be/log:z                     # BE 日志
+    networks:
+      doris-net:
+        ipv4_address: 172.20.80.3
+    # 文件句柄限制
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      # mmap 限制（Doris BE 对内存映射需求较高）
+      memlock:
+        soft: -1
+        hard: -1
+    # 资源限制：BE 建议 8 核、16GB（be.conf 中 mem_limit=12GB，留余量给堆外 + pagecache）
+    mem_limit: 16g
+    cpus: 8
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8040/api/health | grep -q '\"status\":\"ok\"'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
