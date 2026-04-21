@@ -15,7 +15,7 @@ services:
   #   MySQL : localhost:9030
   # ============================================================
   doris-fe:
-    image: apache/doris:fe-4.0.5
+    image: apache/doris:fe-4.0.5-slim
     container_name: doris-fe
     hostname: doris-fe
     restart: unless-stopped
@@ -64,7 +64,7 @@ services:
   #   WebUI : http://localhost:8040
   # ============================================================
   doris-be:
-    image: apache/doris:be-4.0.5
+    image: apache/doris:be-4.0.5-slim
     container_name: doris-be
     hostname: doris-be
     restart: unless-stopped
