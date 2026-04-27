@@ -4,6 +4,7 @@
 
 # 环境：Kylin Linux Advanced Server V10 x86_64 8核32G
 # 镜像来源：从有网络的机器 docker save 导出，再 docker load 导入
+# network_mode: host — 容器直接使用宿主机网络，解决 StreamLoad 307 重定向到容器内部 IP 的问题
 # 默认配置可直接使用，无需修改
 
 services:
@@ -19,24 +20,17 @@ services:
     container_name: doris-fe
     hostname: doris-fe
     restart: unless-stopped
+    network_mode: host
     environment:
       TZ: Asia/Shanghai
       # FE_SERVERS 格式：<fe名称>:<FE容器IP>:<edit_log_port>
-      FE_SERVERS: "fe1:172.30.80.2:9010"
+      # host 模式下使用宿主机IP
+      FE_SERVERS: "fe1:10.79.1.173:9010"
       FE_ID: 1
-    ports:
-      - "8030:8030"   # FE HTTP WebUI
-      - "9030:9030"   # FE MySQL 协议（BI 工具 / mysql 客户端连接）
-      - "9010:9010"   # FE Edit Log（集群内部）
-      - "9020:9020"   # FE RPC（集群内部）
-      - "9090:9090"   # Arrow Flight SQL（可选）
     volumes:
       - ./fe/conf/fe.conf:/opt/apache-doris/fe/conf/fe.conf:z
       - ./fe/doris-meta:/opt/apache-doris/fe/doris-meta:Z
       - ./fe/log:/opt/apache-doris/fe/log:z
-    networks:
-      doris-net:
-        ipv4_address: 172.30.80.2
     ulimits:
       nofile:
         soft: 65536
@@ -62,25 +56,19 @@ services:
     container_name: doris-be
     hostname: doris-be
     restart: unless-stopped
+    network_mode: host
     depends_on:
       doris-fe:
         condition: service_healthy
     environment:
       TZ: Asia/Shanghai
-      FE_SERVERS: "fe1:172.30.80.2:9010"
-      BE_ADDR: "172.30.80.3:9050"
-    ports:
-      - "8040:8040"   # BE HTTP WebUI / Profile
-      - "9050:9050"   # BE 心跳端口
-      - "9060:9060"   # BE Thrift（FE <-> BE 通信）
-      - "8060:8060"   # BE brpc（BE <-> BE 数据交换）
+      # host 模式下使用宿主机IP
+      FE_SERVERS: "fe1:10.79.1.173:9010"
+      BE_ADDR: "10.79.1.173:9050"
     volumes:
       - ./be/conf/be.conf:/opt/apache-doris/be/conf/be.conf:z
       - ./be/storage:/opt/apache-doris/be/storage:Z
       - ./be/log:/opt/apache-doris/be/log:z
-    networks:
-      doris-net:
-        ipv4_address: 172.30.80.3
     ulimits:
       nofile:
         soft: 65536
@@ -98,11 +86,3 @@ services:
       timeout: 10s
       retries: 5
       start_period: 120s
-
-networks:
-  doris-net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.30.80.0/24
