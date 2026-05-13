@@ -2,6 +2,8 @@
 #   https://doris.apache.org/zh-CN/docs/install/cluster-deployment/run-docker-cluster
 #   https://hub.docker.com/r/apache/doris
 
+name: doris4
+
 # 环境：Windows 11 Pro (Docker Desktop + WSL2) 8核(分配) 23.5GB(分配) / 宿主机 32GB
 #        Docker Desktop 通过 WSL2 后端运行 Linux 容器
 #   >docker exec doris-fe mysql -uroot -h127.0.0.1 -P9030 -e "ALTER USER 'root' IDENTIFIED BY '123456';"
@@ -18,6 +20,7 @@ services:
     image: apache/doris:fe-4.0.5-slim
     container_name: doris-fe
     hostname: doris-fe
+    profiles: ["doris"]
     restart: unless-stopped
     environment:
       TZ: Asia/Shanghai
@@ -67,6 +70,7 @@ services:
     image: apache/doris:be-4.0.5-slim
     container_name: doris-be
     hostname: doris-be
+    profiles: ["doris"]
     restart: unless-stopped
     depends_on:
       doris-fe:
