@@ -16,3 +16,5 @@ Windows/doris/4.0.5/doris-be-4.0.5.tar
 Windows/doris/4.0.5/doris-fe-4.0.5.tar
 DockerPull.exe
 Linux/zookeeper/3.7.0/zookeeper/data/*
+Linux/zookeeper/3.7.0/zookeeper/datalog/*
+Windows/nginx/nginx/log/*.log
