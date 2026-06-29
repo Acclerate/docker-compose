@@ -1,0 +1,42 @@
+# 参考：
+#   - 镜像文档：https://github.com/RICwang/docker-wechat
+#   - 论坛教程：https://club.fnnas.com/forum.php?mod=viewthread&tid=31514
+#
+# 说明：
+#   1. 镜像 ricwang/docker-wechat 在 Linux 容器内运行 Linux 版微信(x86_64)，
+#      通过 noVNC(5800)/VNC(5900) 暴露图形界面，浏览器或 VNC 客户端均可访问。
+#   2. Windows(Docker Desktop / WSL2) 适配：
+#      - 不挂载官方示例里的 -v /dev/snd:/dev/snd：Docker Desktop 无该音频设备，
+#        挂载会报错或无效，故去掉并设置 WEB_AUDIO=0（VNC 协议本身也不传输音频）。
+#      - USER_ID=0 / GROUP_ID=0：以 root 运行，规避 Windows bind mount 的属主权限问题。
+#      - privileged: true：容器内 GUI / 输入子系统需要更高权限。
+#   3. 数据持久化到本目录子目录，重建容器后登录态与聊天文件不丢失：
+#        ./.xwechat        -> /root/.xwechat        微信配置 / 登录态
+#        ./xwechat_files   -> /root/xwechat_files   聊天文件 / 图片 / 视频等
+#        ./downloads       -> /root/downloads       微信下载目录
+version: "3"
+services:
+  wechat:
+    image: ricwang/docker-wechat:latest            # 镜像
+    container_name: wechat                          # 容器名为 'wechat'
+    restart: unless-stopped                         # 容器退出后自动重启
+    privileged: true                                # GUI 容器需要特权模式
+    network_mode: bridge                            # 使用默认 bridge 网络，便于直接映射端口
+    volumes:                                        # 数据卷：本机目录映射到容器目录
+      - "./.xwechat:/root/.xwechat"
+      - "./xwechat_files:/root/xwechat_files"
+      - "./downloads:/root/downloads"
+    ports:                                          # 端口映射
+      - "5800:5800"                                 # noVNC Web 访问：浏览器打开 http://127.0.0.1:5800
+      - "5900:5900"                                 # VNC 客户端访问：地址 127.0.0.1:5900
+    environment:                                    # 环境变量，相当于 docker run -e
+      - LANG=zh_CN.UTF-8                            # 中文界面
+      - TZ=Asia/Shanghai                            # 时区
+      - USER_ID=0                                   # 以 root 运行，避免 Windows 挂载目录权限问题
+      - GROUP_ID=0
+      - WEB_AUDIO=0                                 # 关闭音频（Windows 无 /dev/snd，且 VNC 不支持音频）
+      - KEEP_APP_RUNNING=1                          # 微信崩溃/被关闭后自动重启进程
+      - DISPLAY_WIDTH=1920                          # 窗口宽度(像素)
+      - DISPLAY_HEIGHT=1080                         # 窗口高度(像素)
+      # - DARK_MODE=1                              # 可选：深色模式
+      # - VNC_PASSWORD=your_password               # 可选：给 Web/VNC 访问设置密码
