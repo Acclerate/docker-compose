@@ -1,0 +1,69 @@
+# 参考文档：https://shenyu.apache.org/zh/docs/deployment/deployment-docker-compose
+# 版本：2.7.0.3
+# 说明：
+#   1. 本编排仅启动 shenyu-admin + shenyu-bootstrap，不启动 MySQL；
+#   2. 数据源复用已存在的 MySQL 容器（mysql57，MySQL 5.7，root/root，见 Windows/mysql 下编排）。
+#      通过外部网络 mysql_default 用容器名 mysql57:3306 直连。
+#   3. 首次启动 shenyu-admin 会因 shenyu.database.init_enable=true 自动初始化数据库表（库名 shenyu）。
+version: "3"
+services:
+  shenyu-admin:
+    image: apache/shenyu-admin:2.7.0.3
+    container_name: shenyu-admin
+    restart: unless-stopped
+    ports:
+      - "9095:9095"
+    volumes:
+      - "./shenyu-admin/conf:/opt/shenyu-admin/conf"
+      - "./shenyu-admin/logs:/opt/shenyu-admin/logs"
+      - "./shenyu-admin/ext-lib:/opt/shenyu-admin/ext-lib"  # 挂载 mysql-connector.jar
+    environment:
+      - TZ=Asia/Shanghai
+      # 显式指定 mysql profile (镜像内 application.yml 默认是 h2)
+      - SPRING_PROFILES_ACTIVE=mysql
+      # 管理后台前端登录依赖首页注入的 httpPath 作为 API baseURL。
+      # 默认用容器内网 IP (172.x.x.x)，宿主机浏览器无法访问会登录失败/超时。
+      # 设 shenyu.httpPath="." 让前端走相对路径 (Yo = httpPath || "." => ".")，
+      # 请求自动使用浏览器当前访问的 host，本机/远程访问都正常。
+      # entrypoint 读 ADMIN_JVM 作为 JVM 参数 (会完全替换默认内存参数, 故需带上)。
+      - ADMIN_JVM=-server -Xmx2g -Xms2g -Xmn1g -Xss328k -Dshenyu.httpPath=.
+    # ShenYu 2.7.0.3 的 entrypoint 把 ext-lib 加进 -classpath, 但 Spring Boot 3.3.1 的 classloader
+    # 不会扫描它, 导致 mysql 驱动 ClassNotFoundException。这里覆盖启动命令: 先把 ext-lib 的 jar
+    # 复制到 lib/ (Spring Boot 能扫描), 再用官方 entrypoint(官方镜像为 alpine, 仅 /bin/sh)。
+    entrypoint: ["/bin/sh", "-c", "cp -f /opt/shenyu-admin/ext-lib/*.jar /opt/shenyu-admin/lib/ 2>/dev/null; cd /opt/shenyu-admin && exec /bin/sh entrypoint.sh"]
+    networks:
+      - default
+      - mysql_net  # 接入 mysql_default 以解析容器名 mysql57
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:9095/actuator/health | grep UP || exit 1"]
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  shenyu-bootstrap:
+    image: apache/shenyu-bootstrap:2.7.0.3
+    container_name: shenyu-bootstrap
+    restart: unless-stopped
+    ports:
+      - "9195:9195"
+    volumes:
+      - "./shenyu-bootstrap/conf:/opt/shenyu-bootstrap/conf"
+      - "./shenyu-bootstrap/logs:/opt/shenyu-bootstrap/logs"
+    environment:
+      - TZ=Asia/Shanghai
+      - shenyu.sync.websocket.urls=ws://shenyu-admin:9095/websocket  # 通过容器名与 admin 建立 websocket 同步
+    depends_on:
+      shenyu-admin:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9195/actuator/health"]
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+
+networks:
+  default:                       # shenyu-admin 与 shenyu-bootstrap 互通用
+    name: shenyu_net
+  mysql_net:                     # 复用已存在的 mysql 网络以连接 mysql57
+    name: mysql_default
+    external: true

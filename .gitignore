@@ -18,3 +18,5 @@ DockerPull.exe
 Linux/zookeeper/3.7.0/zookeeper/data/*
 Linux/zookeeper/3.7.0/zookeeper/datalog/*
 Windows/nginx/nginx/log/*.log
+Windows/shenyu/shenyu-admin/logs/*
+Windows/shenyu/shenyu-bootstrap/logs/*
