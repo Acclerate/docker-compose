@@ -14,7 +14,6 @@
 #        ./.xwechat        -> /root/.xwechat        微信配置 / 登录态
 #        ./xwechat_files   -> /root/xwechat_files   聊天文件 / 图片 / 视频等
 #        ./downloads       -> /root/downloads       微信下载目录
-version: "3"
 services:
   wechat:
     image: ricwang/docker-wechat:latest            # 镜像

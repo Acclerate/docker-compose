@@ -20,3 +20,9 @@ Linux/zookeeper/3.7.0/zookeeper/datalog/*
 Windows/nginx/nginx/log/*.log
 Windows/shenyu/shenyu-admin/logs/*
 Windows/shenyu/shenyu-bootstrap/logs/*
+Windows/wechat/.xwechat/*
+Windows/wechat/xwechat_files/*
+Windows/wechat/downloads/*
+Windows/shenyu-2.7.0.3/shenyu-admin/logs/*
+.gitignore
+Windows/shenyu-2.7.0.3/shenyu-bootstrap/logs/*

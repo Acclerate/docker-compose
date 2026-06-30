@@ -10,12 +10,15 @@
 docker-compose -f docker-compose-wechat.yml -p wechat up -d
 ```
 
-> 首次启动会自动拉取镜像（约 1GB+），耐心等待。
-> 国内拉取慢可改用镜像加速器，例如：
+> 首次启动会自动拉取镜像（约 1.9GB）。
+>
+> ⚠️ **国内拉取 Docker Hub 容易超时**，可改用镜像加速器拉取后重新打 tag（实测 `docker.1ms.run` 可用，
+> `daocloud` / `dockerproxy.net` 对该镜像返回 403 / TLS 超时）：
 > ```shell
-> docker pull docker.m.daocloud.io/ricwang/docker-wechat:latest
-> docker tag  docker.m.daocloud.io/ricwang/docker-wechat:latest ricwang/docker-wechat:latest
+> docker pull docker.1ms.run/ricwang/docker-wechat:latest
+> docker tag  docker.1ms.run/ricwang/docker-wechat:latest ricwang/docker-wechat:latest
 > ```
+> 拉取完成后再执行上面的 `docker-compose up`。
 
 #### 二、访问
 
@@ -23,6 +26,12 @@ docker-compose -f docker-compose-wechat.yml -p wechat up -d
 - **VNC 客户端**：连接 `127.0.0.1:5900`（未设置 `VNC_PASSWORD` 时密码留空）
 
 打开后看到微信登录界面，用手机微信扫码登录即可。
+
+> ⚠️ **浏览器打不开 / 一直转圈的排查**：服务本身正常（`curl http://127.0.0.1:5800` 能返回 200 即证明），
+> 通常是**浏览器侧**问题：
+> 1. 容器没起来时访问过该地址，浏览器缓存了「失败」状态 → 按 **`Ctrl+Shift+R`** 硬刷新，或开**无痕窗口**。
+> 2. **代理 / VPN**（Clash TUN、系统代理等）劫持了 `127.0.0.1` 流量 → 临时关闭代理，或把 `127.0.0.1`、`localhost` 加入直连白名单。
+> 3. 换个浏览器（Edge / Firefox）试试。
 
 #### 三、数据持久化
 
