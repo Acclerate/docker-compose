@@ -14,6 +14,18 @@
 #        ./.xwechat        -> /root/.xwechat        微信配置 / 登录态
 #        ./xwechat_files   -> /root/xwechat_files   聊天文件 / 图片 / 视频等
 #        ./downloads       -> /root/downloads       微信下载目录
+#   4. 剪贴板修复（解决 noVNC/VNC 与宿主机之间无法复制粘贴的问题）：
+#      根因：镜像基于 jlesage/baseimage-gui，Xvnc(TigerVNC) 的 SendCutText/
+#      AcceptCutText 默认开启，但 SendPrimary/SetPrimary 未启用；且容器内缺少
+#      xclip/autocutsel，X11 的 PRIMARY 与 CLIPBOARD 选区互不互通。
+#      修复：
+#        a) XVNC_SERVER_CUSTOM_PARAMS 启用 -SendPrimary on -SetPrimary on
+#        b) 挂载 clipboard-fix/ 目录，容器启动时自动安装 xclip + autocutsel
+#        c) autocutsel 守护进程（cont-init 用 setsid 启动）实现 PRIMARY <-> CLIPBOARD 双向同步
+#        d) WEB_FILE_MANAGER + img-to-clipboard：图片粘贴桥（RFB 剪贴板不支持图片）
+#      使用：
+#        - 文本：noVNC 左侧剪贴板图标 / VNC 客户端剪贴板同步
+#        - 图片：见 run.md「六.六、图片粘贴」
 services:
   wechat:
     image: ricwang/docker-wechat:latest            # 镜像
@@ -25,6 +37,14 @@ services:
       - "./.xwechat:/root/.xwechat"
       - "./xwechat_files:/root/xwechat_files"
       - "./downloads:/root/downloads"
+      # --- 剪贴板修复：挂载离线 deb 包和初始化脚本 ---
+      - "./clipboard-fix/debs:/clipboard-fix/debs:ro"
+      - "./clipboard-fix/cont-init.d/99-clipboard.sh:/etc/cont-init.d/99-clipboard.sh:ro"
+      # 图片粘贴桥：挂到 PATH 内，可用 `docker exec wechat img-to-clipboard <图片>`
+      - "./clipboard-fix/img-to-clipboard.sh:/usr/local/bin/img-to-clipboard:ro"
+      # 图片粘贴 HTTP 服务（perl）+ 网页（nginx 反代到 /clip/）
+      - "./clipboard-fix/clip-httpd.pl:/clipboard-fix/clip-httpd.pl:ro"
+      - "./clipboard-fix/clip-web:/clipboard-fix/clip-web:ro"
     ports:                                          # 端口映射
       - "5800:5800"                                 # noVNC Web 访问：浏览器打开 http://127.0.0.1:5800
       - "5900:5900"                                 # VNC 客户端访问：地址 127.0.0.1:5900
@@ -37,5 +57,12 @@ services:
       - KEEP_APP_RUNNING=1                          # 微信崩溃/被关闭后自动重启进程
       - DISPLAY_WIDTH=1920                          # 窗口宽度(像素)
       - DISPLAY_HEIGHT=1080                         # 窗口高度(像素)
+      # --- 文件管理器（noVNC 左侧面板的文件夹图标）---
+      #     开启后可在浏览器里上传/下载文件，是「图片粘贴」方案的上传通道：
+      #     宿主机图片 → 文件管理器上传到 /root/downloads/ → 微信里 Ctrl+V 粘贴。
+      #     （RFB/VNC 协议的剪贴板只支持纯文本，图片必须走文件通道）
+      - WEB_FILE_MANAGER=1
+      # --- 剪贴板修复：启用 VNC PRIMARY 选区同步 ---
+      - XVNC_SERVER_CUSTOM_PARAMS=-SendPrimary on -SetPrimary on
       # - DARK_MODE=1                              # 可选：深色模式
       # - VNC_PASSWORD=your_password               # 可选：给 Web/VNC 访问设置密码
