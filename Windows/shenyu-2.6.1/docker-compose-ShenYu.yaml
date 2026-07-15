@@ -51,11 +51,22 @@ services:
     volumes:
       - "./shenyu-bootstrap/conf:/opt/shenyu-bootstrap/conf"
       - "./shenyu-bootstrap/logs:/opt/shenyu-bootstrap/logs"
+      - "./shenyu-bootstrap/ext-lib:/opt/shenyu-bootstrap/ext-lib"
     environment:
       - TZ=Asia/Shanghai
       # websocket urls 已在 conf/application.yml 指向 ws://shenyu-admin-261:9095/websocket，
       # 这里再用环境变量覆盖一次，确保走容器名与 admin 建立同步（双保险）。
       - shenyu.sync.websocket.urls=ws://shenyu-admin-261:9095/websocket
+      - GW_SIGN_KEY_SOURCE=redis
+      - GW_SIGN_REDIS_HOST=host.docker.internal
+      - GW_SIGN_REDIS_PORT=6379
+      - GW_SIGN_REDIS_DATABASE=0
+      - GW_SIGN_REDIS_PASSWORD=123456
+      - GW_SIGN_REDIS_TIMEOUT_MS=1500
+      - GW_SIGN_REDIS_BIZ_PUBLIC_KEY_PATTERN=shenyu:sign:%s:biz-public-key.pem
+      - GW_SIGN_CACHE_TTL_SECONDS=30
+      - GW_SIGN_CACHE_FAILURE_RETRY_SECONDS=3
+      - GW_SIGN_CACHE_ALLOW_STALE_ON_REFRESH_FAILURE=true
     depends_on:
       shenyu-admin:
         condition: service_healthy
@@ -64,6 +75,7 @@ services:
       timeout: 5s
       retries: 30
       start_period: 90s
+
 
 networks:
   default:                          # shenyu-admin-261 与 shenyu-bootstrap-261 互通用

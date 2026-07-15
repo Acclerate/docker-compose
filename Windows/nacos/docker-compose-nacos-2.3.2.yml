@@ -1,0 +1,60 @@
+# docker-compose参考：https://github.com/nacos-group/nacos-docker/blob/master/example/standalone-mysql-8.yaml
+# 版本：2.3.2
+# 说明：  
+#   1. 单机模式 + MySQL 持久化 + 鉴权，默认即开箱对接 ShenYu 2.6.1
+#      （鉴权 key/value/secret 与 shenyu-admin/bootstrap 的 application.yml 默认值对齐）。
+#   2. 首次启动前需手动建库 nacos_config 并执行 nacos_2.3.2/nacos-mysql.sql
+#      （2.x 表结构新增 encrypted_data_key 字段，不可复用 1.x 的 sql）。
+#   3. Nacos 2.x 新增 gRPC 端口：主端口 +1000(9848, sdk 客户端) / +1001(9849, 集群)，
+#      客户端通过 gRPC 交互，9848 必须对外暴露，否则 Java 应用连不上。  http://localhost:8848/nacos/#/login
+#   4. MYSQL_SERVICE_HOST 不能填 127.0.0.1/localhost，须填宿主机 IP 或加入 mysql 网络。
+version: '2'
+services:
+  nacos:
+    image: nacos/nacos-server:v2.3.2                              # 镜像 nacos/nacos-server:v2.3.2
+    container_name: nacos_server_232                              # 容器名为'nacos_server_232'
+    restart: unless-stopped                                       # 退出后总是重启（daemon 启动时已停止的除外）
+    volumes:                                                      # 数据卷挂载,本机目录映射到容器目录
+      - "./nacos_2.3.2/logs:/home/nacos/logs"
+      - "./nacos_2.3.2/init.d/custom.properties:/home/nacos/init.d/custom.properties"
+      - "./nacos_2.3.2/conf/application.properties:/home/nacos/conf/application.properties"
+    environment:                                                  # 环境变量，相当于 docker run 的 -e
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+      - PREFER_HOST_MODE=hostname                                 # 支持主机名时用 hostname，否则 ip
+      - MODE=standalone                                           # 单机模式启动
+      # ---- MySQL 持久化 ----
+      - SPRING_DATASOURCE_PLATFORM=mysql                          # 数据源平台 mysql
+      - MYSQL_SERVICE_HOST=mysql57                                # 通过 mysql_default 网络用容器名直连（注：不能为 127.0.0.1/localhost）
+      - MYSQL_SERVICE_DB_NAME=nacos_config                        # 所需 sql 脚本位于 nacos_2.3.2/nacos-mysql.sql
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_USER=root                                   # 复用已存在的 mysql57（MySQL 5.7，root/root）
+      - MYSQL_SERVICE_PASSWORD=root
+      # ---- 鉴权（ShenYu 链路默认值，与 application.properties 保持一致，可在此覆盖）----
+      - NACOS_AUTH_ENABLE=true
+      - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=   # Base64，原始长度 ≥ 32
+      - NACOS_AUTH_IDENTITY_KEY=shenyu-nacos
+      - NACOS_AUTH_IDENTITY_VALUE=shenyu-nacos-2026
+      # ---- JVM 调优参数 ----
+      - JVM_XMS=256m   #-Xms default :2g
+      - JVM_XMX=512m   #-Xmx default :2g
+      - JVM_XMN=128m   #-Xmn default :1g
+      - JVM_MS=64m     #-XX:MetaspaceSize default :128m
+      - JVM_MMS=128m   #-XX:MaxMetaspaceSize default :320m
+      - NACOS_DEBUG=n  #是否开启远程debug，y/n，默认n
+      - TOMCAT_ACCESSLOG_ENABLED=false #是否开启tomcat访问日志，默认false
+    ports:                                                        # 映射端口
+      - "8848:8848"   # Nacos 主端口（HTTP 控制台 + OpenAPI）
+      - "9848:9848"   # gRPC sdk 端口（主端口 +1000，2.x 客户端必须）
+      - "9849:9849"   # gRPC cluster 端口（主端口 +1001，集群间同步，单机可不开但保留）
+    mem_limit: 1500m   # 最大使用内存
+    networks:
+      - default
+      - mysql_net   # 接入 mysql_default 以解析容器名 mysql57
+
+networks:
+  default:
+    name: nacos_net_232
+  mysql_net:                        # 复用已存在的 mysql 网络以连接 mysql57
+    name: mysql_default
+    external: true

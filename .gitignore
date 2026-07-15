@@ -26,3 +26,5 @@ Windows/wechat/downloads/*
 Windows/shenyu-2.7.0.3/shenyu-admin/logs/*
 .gitignore
 Windows/shenyu-2.7.0.3/shenyu-bootstrap/logs/*
+Windows/nacos/nacos_2.3.2/logs/*
+Windows/wechat/clipboard-fix/clip-web/*

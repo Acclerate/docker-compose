@@ -1,0 +1,45 @@
+# ========================================================================
+# docker-compose-ShenYu.yaml 补丁片段
+# ========================================================================
+# 目标文件：D:\privategit\gitee\docker-compose\Windows\shenyu-2.6.1\docker-compose-ShenYu.yaml
+# 说明：手动将以下改动应用到 shenyu-bootstrap 服务
+# ========================================================================
+
+services:
+  shenyu-bootstrap:
+    # 改动 1：镜像替换（原 apache/shenyu-bootstrap:2.6.1）
+    image: shenyu-bootstrap:2.6.1-sign-redis-latest
+
+    # 改动 2：删除 ext-lib bind mount（因为 jar 已打进镜像）
+    volumes:
+      - "./shenyu-bootstrap/conf:/opt/shenyu-bootstrap/conf"
+      - "./shenyu-bootstrap/logs:/opt/shenyu-bootstrap/logs"
+      # 删除这行：- "./shenyu-bootstrap/ext-lib:/opt/shenyu-bootstrap/ext-lib"
+
+    # 改动 3：新增 Redis 公钥相关环境变量
+    environment:
+      # 原有环境变量保留...
+      # 新增以下环境变量：
+      - GW_SIGN_KEY_SOURCE=redis
+      - GW_SIGN_REDIS_HOST=host.docker.internal
+      - GW_SIGN_REDIS_PORT=6379
+      - GW_SIGN_REDIS_DATABASE=0
+      - GW_SIGN_REDIS_PASSWORD=123456
+      - GW_SIGN_REDIS_TIMEOUT-MS=1500
+      - GW_SIGN_REDIS_BIZ_PUBLIC_KEY_KEY=shenyu:sign:biz-public-key.pem
+      - GW_SIGN_CACHE_TTL_SECONDS=30
+      - GW_SIGN_CACHE_FAILURE_RETRY_SECONDS=3
+      - GW_SIGN_CACHE_ALLOW_STALE_ON_REFRESH_FAILURE=true
+      - TZ=Asia/Shanghai
+
+    # 改动 4：extra_hosts 保证 Linux Docker 也能用 host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+# ========================================================================
+# 验证步骤：
+# 1. 修改 docker-compose-ShenYu.yaml
+# 2. docker-compose -f docker-compose-ShenYu.yaml config | grep -E "image:|GW_SIGN_|extra_hosts" 确认改动
+# 3. docker-compose -f docker-compose-ShenYu.yaml -p shenyu261 up -d shenyu-bootstrap
+# 4. docker-compose logs -f shenyu-bootstrap | grep GW-Sign 确认 Redis 模式启用
+# ========================================================================
