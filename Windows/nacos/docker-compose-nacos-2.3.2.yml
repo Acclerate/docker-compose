@@ -6,13 +6,13 @@
 #   2. 首次启动前需手动建库 nacos_config 并执行 nacos_2.3.2/nacos-mysql.sql
 #      （2.x 表结构新增 encrypted_data_key 字段，不可复用 1.x 的 sql）。
 #   3. Nacos 2.x 新增 gRPC 端口：主端口 +1000(9848, sdk 客户端) / +1001(9849, 集群)，
-#      客户端通过 gRPC 交互，9848 必须对外暴露，否则 Java 应用连不上。  http://localhost:8848/nacos/#/login
+#      客户端通过 gRPC 交互，9848 必须对外暴露，否则 Java 应用连不上。  http://localhost:8848/nacos/#/login  登录成功后，可访问控制台。nacos/nacos
 #   4. MYSQL_SERVICE_HOST 不能填 127.0.0.1/localhost，须填宿主机 IP 或加入 mysql 网络。
 version: '2'
 services:
   nacos:
     image: nacos/nacos-server:v2.3.2                              # 镜像 nacos/nacos-server:v2.3.2
-    container_name: nacos_server_232                              # 容器名为'nacos_server_232'
+    container_name: nacosserver232                              # 容器名为'nacos_server_232'
     restart: unless-stopped                                       # 退出后总是重启（daemon 启动时已停止的除外）
     volumes:                                                      # 数据卷挂载,本机目录映射到容器目录
       - "./nacos_2.3.2/logs:/home/nacos/logs"
@@ -31,7 +31,7 @@ services:
       - MYSQL_SERVICE_USER=root                                   # 复用已存在的 mysql57（MySQL 5.7，root/root）
       - MYSQL_SERVICE_PASSWORD=root
       # ---- 鉴权（ShenYu 链路默认值，与 application.properties 保持一致，可在此覆盖）----
-      - NACOS_AUTH_ENABLE=true
+      - NACOS_AUTH_ENABLE=false
       - NACOS_AUTH_TOKEN=VGhpc0lzTXlDdXN0b21TZWNyZXRLZXkwMTIzNDU2Nzg=   # Base64，原始长度 ≥ 32
       - NACOS_AUTH_IDENTITY_KEY=shenyu-nacos
       - NACOS_AUTH_IDENTITY_VALUE=shenyu-nacos-2026
